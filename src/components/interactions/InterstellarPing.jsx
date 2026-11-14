@@ -34,63 +34,67 @@ export default function InterstellarPing() {
     }
   ];
 
+  const activeTlRef = useRef(null);
+
   // GSAP animation for signal pulse travel
   const handleTransmit = () => {
     if (transmissionState !== 'IDLE' && transmissionState !== 'COMPLETED') return;
+
+    if (activeTlRef.current) activeTlRef.current.kill();
 
     setTransmissionState('UPLINK');
     setReceivedTelemetry(null);
     setSimulatedTimeHours(0);
 
-    const mm = gsap.matchMedia();
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-    mm.add('(prefers-reduced-motion: no-preference)', () => {
-      const tl = gsap.timeline();
-
-      // Uplink to Voyager 1 (0 -> 24 hours)
-      tl.to(wavePacketRef.current, {
-        left: '94%',
-        duration: 2.2,
-        ease: 'power1.inOut',
-        onUpdate: function() {
-          const progress = this.progress();
-          setSimulatedTimeHours(+(progress * 24).toFixed(1));
-        },
-        onComplete: () => {
-          setTransmissionState('AT_VOYAGER');
-        }
-      })
-      // Downlink back to Madrid DSN (24 -> 48 hours)
-      .to(wavePacketRef.current, {
-        left: '4%',
-        duration: 2.2,
-        delay: 0.4,
-        ease: 'power1.inOut',
-        onStart: () => {
-          setTransmissionState('DOWNLINK');
-        },
-        onUpdate: function() {
-          const progress = this.progress();
-          setSimulatedTimeHours(+(24 + progress * 24).toFixed(1));
-        },
-        onComplete: () => {
-          setTransmissionState('COMPLETED');
-          const cmd = commands.find((c) => c.id === selectedCommand);
-          setReceivedTelemetry(cmd.expectedReply);
-        }
-      });
-    });
-
-    mm.add('(prefers-reduced-motion: reduce)', () => {
-      // Instant execution without animation loops
+    if (prefersReducedMotion) {
       setSimulatedTimeHours(48.0);
       setTransmissionState('COMPLETED');
       const cmd = commands.find((c) => c.id === selectedCommand);
-      setReceivedTelemetry(cmd.expectedReply);
+      setReceivedTelemetry(cmd?.expectedReply || null);
+      return;
+    }
+
+    const tl = gsap.timeline();
+    activeTlRef.current = tl;
+
+    // Uplink to Voyager 1 (0 -> 24 hours)
+    tl.to(wavePacketRef.current, {
+      left: '94%',
+      duration: 2.2,
+      ease: 'power1.inOut',
+      onUpdate: function() {
+        const progress = this.progress();
+        setSimulatedTimeHours(+(progress * 24).toFixed(1));
+      },
+      onComplete: () => {
+        setTransmissionState('AT_VOYAGER');
+      }
+    })
+    // Downlink back to Madrid DSN (24 -> 48 hours)
+    .to(wavePacketRef.current, {
+      left: '4%',
+      duration: 2.2,
+      delay: 0.4,
+      ease: 'power1.inOut',
+      onStart: () => {
+        setTransmissionState('DOWNLINK');
+      },
+      onUpdate: function() {
+        const progress = this.progress();
+        setSimulatedTimeHours(+(24 + progress * 24).toFixed(1));
+      },
+      onComplete: () => {
+        setTransmissionState('COMPLETED');
+        const cmd = commands.find((c) => c.id === selectedCommand);
+        setReceivedTelemetry(cmd?.expectedReply || null);
+      }
     });
   };
 
   const resetSimulation = () => {
+    if (activeTlRef.current) activeTlRef.current.kill();
     setTransmissionState('IDLE');
     setSimulatedTimeHours(0);
     setReceivedTelemetry(null);
@@ -103,6 +107,9 @@ export default function InterstellarPing() {
     if (wavePacketRef.current) {
       gsap.set(wavePacketRef.current, { left: '4%' });
     }
+    return () => {
+      if (activeTlRef.current) activeTlRef.current.kill();
+    };
   }, []);
 
   const activeCmdObj = commands.find((c) => c.id === selectedCommand);
@@ -122,7 +129,7 @@ export default function InterstellarPing() {
       {/* Header & Mandatory Simplified Model Badge */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: 'var(--space-md)' }}>
         <span className="badge-tag badge-tag--model">
-          SIMPLIFIED TEACHING MODEL: SPEED-OF-LIGHT TELEMETRY LATENCY
+          Simplified model · Speed-of-Light Telemetry Latency (24h One-Way / 48h Round-Trip)
         </span>
         <span className="badge-tag" style={{ color: 'var(--color-amber-bright)', borderColor: 'rgba(245, 158, 11, 0.4)' }}>
           DSN 70-METER DISH LINK
