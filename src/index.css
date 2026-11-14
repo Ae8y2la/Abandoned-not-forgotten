@@ -7,7 +7,10 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  /* Keep space-black but let the fixed starfield Canvas show through */
   background-color: var(--color-space-black);
+  position: relative;
+  isolation: isolate;         /* new stacking context keeps z-index clean */
 }
 
 .site-container {
