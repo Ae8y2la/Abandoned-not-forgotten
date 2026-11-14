@@ -1,7 +1,7 @@
 import React from 'react';
 import { references } from '../../data/references.js';
 
-export default function Footer({ onOpenSources }) {
+export default function Footer({ onOpenSources, onReplayIntro }) {
   return (
     <footer 
       role="contentinfo"
@@ -43,13 +43,25 @@ export default function Footer({ onOpenSources }) {
             <p className="text-body" style={{ fontSize: '0.8125rem', lineHeight: 1.6, color: 'var(--color-telemetry-silver)', marginBottom: 'var(--space-sm)' }}>
               All scientific data, mission timelines, and coordinates are audited against primary NASA Technical Reports, Apollo flight logs, and LROC orbital imagery.
             </p>
-            <button
-              onClick={onOpenSources}
-              className="badge-tag badge-tag--amber"
-              style={{ cursor: 'pointer' }}
-            >
-              View Primary Sources & Dossier ↗
-            </button>
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              <button
+                onClick={onOpenSources}
+                className="badge-tag badge-tag--amber"
+                style={{ cursor: 'pointer' }}
+              >
+                View Primary Sources & Dossier ↗
+              </button>
+              {onReplayIntro && (
+                <button
+                  onClick={onReplayIntro}
+                  className="badge-tag"
+                  style={{ cursor: 'pointer', borderColor: 'var(--color-surface-border)' }}
+                  aria-label="Replay the 20-second cinematic intro sequence"
+                >
+                  Replay Cinematic Prologue ↺
+                </button>
+              )}
+            </div>
           </div>
 
         </div>

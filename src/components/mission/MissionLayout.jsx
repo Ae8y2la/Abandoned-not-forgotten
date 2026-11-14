@@ -6,6 +6,9 @@ import { MOTION_DURATION, MOTION_EASE, refreshScrollTrigger } from '../../styles
 import LunarRoverSim from '../interactions/LunarRoverSim.jsx';
 import MarsEvidenceLab from '../interactions/MarsEvidenceLab.jsx';
 import InterstellarPing from '../interactions/InterstellarPing.jsx';
+import Scene1Moon from './Scene1Moon.jsx';
+import Scene2Mars from './Scene2Mars.jsx';
+import Scene3Voyager from './Scene3Voyager.jsx';
 import { imageCredits } from '../../data/credits.js';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -220,6 +223,20 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
           </div>
         </div>
       </nav>
+
+      {/* Cinematic Pinned 3D Moon Scene (Scene 1) */}
+      {mission.id === 'apollo-15-lrv' && <Scene1Moon />}
+
+      {/* Cinematic Pinned 3D Mars Scene (Scene 2) */}
+      {mission.id === 'opportunity-mer' && <Scene2Mars />}
+
+      {/* Cinematic Pinned 3D Deep Space Scene (Scene 3) & Finale */}
+      {mission.id === 'voyager-1' && (
+        <Scene3Voyager
+          onExploreAgain={onBackToSelector}
+          onOpenSources={onOpenSources}
+        />
+      )}
 
       {/* Hero Header with Authentic NASA Master Photograph */}
       <header 

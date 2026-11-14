@@ -141,7 +141,7 @@ export default function InterstellarPing() {
           Follow the Signal: Interstellar Telemetry Delay
         </h3>
         <p className="text-body" style={{ fontSize: '0.9375rem', maxWidth: '820px' }}>
-          Radio waves travel at the speed of light ($299,792\text{ km/s}$). Select an engineering or science command and transmit it to Voyager 1 across <strong>25.9 billion kilometers</strong> (1 light-day). Observe why real-time control is physically impossible.
+          Radio waves travel at the speed of light (299,792 km/s). Select an engineering or science command and transmit it to Voyager 1 across <strong>25.9 billion kilometers</strong> (1 light-day). Observe why real-time control is physically impossible.
         </p>
       </div>
 

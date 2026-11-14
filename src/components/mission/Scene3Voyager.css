@@ -1,0 +1,289 @@
+/* ==========================================================================
+   THE UNFINISHED MISSION — Scene 3: Deep Space (Voyager 1) & Finale
+   Interstellar aesthetic: Quiet, majestic, infinite depth parallax.
+   The Pale Blue Dot, closing contemplation, calm CTA, and Credits section.
+   ========================================================================== */
+
+.scene3-voyager-root {
+  position: relative;
+  width: 100%;
+  background-color: #030508;
+  color: #F4F6F8;
+  overflow: visible;
+}
+
+/* Scroll track for GSAP pinning (400vh gives slow, awe-inspiring depth) */
+.scene3-voyager-track {
+  position: relative;
+  width: 100%;
+  height: 400vh;
+}
+
+/* Pinned Fullscreen Stage */
+.scene3-voyager-stage {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #030508;
+}
+
+/* 3D WebGL Canvas Layer */
+.scene3-voyager-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+/* Film Grain Overlay */
+.scene3-voyager-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+/* Deep Space Vignette */
+.scene3-voyager-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(3, 5, 8, 0.85) 100%);
+}
+
+/* Telemetry Header HUD */
+.scene3-voyager-hud-header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem clamp(1.5rem, 4vw, 3.5rem);
+  pointer-events: none;
+  user-select: none;
+}
+
+.scene3-hud-tag {
+  font-family: var(--font-mono, 'Space Grotesk', monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-deep-gold, #D97706);
+  background: rgba(14, 20, 32, 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(217, 119, 6, 0.35);
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+.scene3-hud-meta {
+  font-family: var(--font-mono, 'Space Grotesk', monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-telemetry-silver, #A8B3C2);
+  text-align: right;
+  line-height: 1.5;
+}
+
+/* Sequential Story Text Stage */
+.scene3-voyager-story-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 2rem clamp(2rem, 5vh, 4rem);
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Story Card */
+.scene3-story-card {
+  background: rgba(10, 14, 22, 0.75);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(217, 119, 6, 0.22);
+  border-radius: 8px;
+  padding: 1.6rem 2.4rem;
+  box-shadow: 0 10px 45px rgba(0, 0, 0, 0.8);
+  max-width: 840px;
+  width: 100%;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.scene3-story-phase {
+  font-family: var(--font-mono, 'Space Grotesk', monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-deep-gold, #D97706);
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.scene3-story-text {
+  font-family: var(--font-editorial, 'Newsreader', Georgia, serif);
+  font-weight: 300;
+  font-size: clamp(1.15rem, 2.2vw, 1.65rem);
+  line-height: 1.55;
+  letter-spacing: 0.04em;
+  color: #F4F6F8;
+  margin: 0;
+  min-height: 2.8em;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.95);
+}
+
+/* Typewriter cursor */
+.scene3-typewriter-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background-color: var(--color-deep-gold, #D97706);
+  margin-left: 4px;
+  vertical-align: middle;
+  animation: scene3CursorBlink 1s infinite;
+}
+
+@keyframes scene3CursorBlink {
+  0%, 45% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* Scroll Cue Pill */
+.scene3-scroll-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono, 'Space Grotesk', monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(217, 119, 6, 0.7);
+  margin-top: 1rem;
+}
+
+.scene3-scroll-arrow {
+  display: inline-block;
+  animation: scene3ArrowBob 2s infinite ease-in-out;
+}
+
+@keyframes scene3ArrowBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* ─── Pale Blue Dot Overlay ───────────────────────────────────────────────── */
+.scene3-pale-dot-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  background-color: rgba(3, 5, 8, 0.95);
+  transition: opacity 1.2s ease;
+}
+
+/* Sunbeam Ray Across Space (Authentic to the Voyager 1 Wide-Angle Frame) */
+.scene3-sunbeam {
+  position: absolute;
+  top: -20%;
+  left: 45%;
+  width: 70px;
+  height: 140%;
+  transform: rotate(26deg);
+  background: linear-gradient(90deg, transparent 0%, rgba(245, 158, 11, 0.08) 35%, rgba(56, 189, 248, 0.12) 50%, rgba(245, 158, 11, 0.08) 65%, transparent 100%);
+  filter: blur(8px);
+  pointer-events: none;
+}
+
+/* The Luminous Pale Blue Dot */
+.scene3-pale-dot {
+  position: relative;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #60A5FA;
+  box-shadow: 0 0 12px #38BDF8, 0 0 24px rgba(96, 165, 250, 0.8), 0 0 45px rgba(56, 189, 248, 0.4);
+  animation: paleDotPulse 3s infinite ease-in-out;
+}
+
+@keyframes paleDotPulse {
+  0%, 100% { transform: scale(1); opacity: 0.85; }
+  50% { transform: scale(1.3); opacity: 1; }
+}
+
+.scene3-pale-dot-label {
+  font-family: var(--font-mono, 'Space Grotesk', monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: #38BDF8;
+  margin-top: 1.2rem;
+  opacity: 0.85;
+}
+
+/* ─── Grand Finale Section: Explore Again & Credits ───────────────────────── */
+.scene3-finale-section {
+  position: relative;
+  z-index: 20;
+  background-color: #05070A;
+  border-top: 1px solid var(--color-surface-border);
+  padding: clamp(3rem, 8vh, 6rem) 0;
+}
+
+.scene3-finale-container {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 clamp(1.5rem, 4vw, 3rem);
+  text-align: center;
+}
+
+.scene3-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: rgba(217, 119, 6, 0.12);
+  border: 1px solid var(--color-deep-gold, #D97706);
+  color: #FFFFFF;
+  font-family: var(--font-mono, 'Space Grotesk', monospace);
+  font-size: 0.875rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  padding: 14px 32px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 250ms ease;
+  margin-bottom: 3.5rem;
+}
+
+.scene3-cta-btn:hover {
+  background: var(--color-deep-gold, #D97706);
+  color: #030508;
+  box-shadow: 0 0 25px rgba(217, 119, 6, 0.45);
+}
+
+.scene3-cta-btn:focus-visible {
+  outline: 2px solid var(--color-focus-ring, #60A5FA);
+  outline-offset: 4px;
+}

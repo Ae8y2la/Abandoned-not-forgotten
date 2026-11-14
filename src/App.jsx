@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Navigation from './components/common/Navigation.jsx';
 import Footer from './components/common/Footer.jsx';
 import SourcesModal from './components/common/SourcesModal.jsx';
@@ -8,6 +8,7 @@ import MissionLayout from './components/mission/MissionLayout.jsx';
 import StarfieldBackground from './components/common/StarfieldBackground.jsx';
 import CinematicIntro from './components/opening/CinematicIntro.jsx';
 import ScrollProgress from './components/common/ScrollProgress.jsx';
+import ChildAstronaut from './components/common/ChildAstronaut.jsx';
 import useLenis from './hooks/useLenis.js';
 import { missions, getMissionById } from './data/missions.js';
 
@@ -15,7 +16,14 @@ export default function App() {
   const [viewMode, setViewMode] = useState('home'); // 'home' | 'mission'
   const [activeMissionId, setActiveMissionId] = useState('apollo-15-lrv');
   const [isSourcesOpen, setIsSourcesOpen] = useState(false);
-  const [introComplete, setIntroComplete] = useState(false);
+  const [introComplete, setIntroComplete] = useState(() => {
+    // Only skip intro if user has already seen it in this browser session
+    try {
+      return sessionStorage.getItem('unfinished_mission_intro_seen') === 'true';
+    } catch (_) {
+      return false;
+    }
+  });
 
   // Initialise Lenis smooth scroll (no-op when prefers-reduced-motion is set)
   useLenis();
@@ -54,16 +62,24 @@ export default function App() {
     }, 50);
   };
 
+  const handleReplayIntro = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIntroComplete(false);
+  };
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', minHeight: '100vh', backgroundColor: 'var(--color-space-black)' }}>
 
       {/* ── Persistent 3D starfield behind everything ── */}
       <StarfieldBackground />
 
-      {/* ── Cinematic intro: plays once on first load ── */}
+      {/* ── Cinematic intro: strictly sequential, Interstellar aesthetic ── */}
       {!introComplete && (
         <CinematicIntro onComplete={() => setIntroComplete(true)} />
       )}
+
+      {/* ── Small Child Astronaut floating in the vast universe ── */}
+      {introComplete && <ChildAstronaut />}
 
       {/* ── Persistent side scroll-progress timeline ── */}
       {introComplete && <ScrollProgress />}
@@ -73,6 +89,7 @@ export default function App() {
         activeMissionId={viewMode === 'mission' ? activeMissionId : null}
         onSelectMission={handleSelectMission}
         onOpenSources={() => setIsSourcesOpen(true)}
+        onReplayIntro={handleReplayIntro}
       />
 
       {/* Main Dynamic Viewport */}
@@ -99,7 +116,10 @@ export default function App() {
       </main>
 
       {/* Primary Footer with NASA Disclaimer & AI Disclosure */}
-      <Footer onOpenSources={() => setIsSourcesOpen(true)} />
+      <Footer
+        onOpenSources={() => setIsSourcesOpen(true)}
+        onReplayIntro={handleReplayIntro}
+      />
 
       {/* Accessible Primary Sources & Provenance Modal */}
       <SourcesModal

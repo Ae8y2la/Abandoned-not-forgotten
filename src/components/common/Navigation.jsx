@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function Navigation({ activeMissionId, onSelectMission, onOpenSources }) {
+export default function Navigation({ activeMissionId, onSelectMission, onOpenSources, onReplayIntro }) {
   return (
     <nav 
       aria-label="Main Navigation"
@@ -61,7 +61,17 @@ export default function Navigation({ activeMissionId, onSelectMission, onOpenSou
         </div>
 
         {/* Citations & NASA Disclaimer Button */}
-        <div>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+          {onReplayIntro && (
+            <button
+              onClick={onReplayIntro}
+              className="badge-tag"
+              style={{ cursor: 'pointer', borderColor: 'var(--color-surface-border)' }}
+              aria-label="Replay prologue"
+            >
+              Prologue ↺
+            </button>
+          )}
           <button
             onClick={onOpenSources}
             className="badge-tag"

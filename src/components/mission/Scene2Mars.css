@@ -1,0 +1,234 @@
+/* ==========================================================================
+   THE UNFINISHED MISSION — Scene 2: Mars (Opportunity Rover MER-B)
+   Aesthetic: Interstellar / Martian Dust Storm — Emotional, quiet, dramatic.
+   Sky shifts from butterscotch orange to dusky dark red; solar panels dim.
+   ========================================================================== */
+
+.scene2-mars-root {
+  position: relative;
+  width: 100%;
+  background-color: #0A0504;
+  color: #F4F6F8;
+  overflow: visible;
+}
+
+/* Scroll track for GSAP pinning (400vh gives generous emotional pacing) */
+.scene2-mars-track {
+  position: relative;
+  width: 100%;
+  height: 400vh;
+}
+
+/* Pinned Fullscreen Stage */
+.scene2-mars-stage {
+  position: sticky;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100dvh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: #0D0605;
+  transition: background-color 0.8s ease;
+}
+
+/* 3D WebGL Canvas Layer */
+.scene2-mars-canvas-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: auto;
+}
+
+/* Atmospheric Dust Haze Overlay that thickens with scroll */
+.scene2-mars-dust-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 3;
+  background: radial-gradient(circle at 50% 30%, rgba(200, 86, 50, 0.15) 0%, rgba(45, 15, 10, 0.45) 70%, #0A0504 100%);
+  mix-blend-mode: multiply;
+  transition: opacity 0.5s ease;
+}
+
+/* Film Grain Overlay */
+.scene2-mars-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  opacity: 0.055;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  mix-blend-mode: overlay;
+}
+
+/* Vignette Shadow */
+.scene2-mars-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 4;
+  background: radial-gradient(ellipse at center, transparent 35%, rgba(10, 5, 4, 0.8) 100%);
+}
+
+/* Telemetry Header HUD */
+.scene2-mars-hud-header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem clamp(1.5rem, 4vw, 3.5rem);
+  pointer-events: none;
+  user-select: none;
+}
+
+.scene2-hud-tag {
+  font-family: var(--font-mono, 'Space Grotesk', monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--color-mars-rust, #C85632);
+  background: rgba(22, 10, 8, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(200, 86, 50, 0.35);
+  padding: 6px 12px;
+  border-radius: 4px;
+}
+
+.scene2-hud-meta {
+  font-family: var(--font-mono, 'Space Grotesk', monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-telemetry-silver, #A8B3C2);
+  text-align: right;
+  line-height: 1.5;
+}
+
+/* Sequential Story Text Stage */
+.scene2-mars-story-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 0 2rem clamp(2rem, 5vh, 4rem);
+  min-height: 170px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Story Card */
+.scene2-story-card {
+  background: rgba(16, 9, 8, 0.8);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(200, 86, 50, 0.25);
+  border-radius: 8px;
+  padding: 1.6rem 2.4rem;
+  box-shadow: 0 10px 45px rgba(0, 0, 0, 0.75);
+  max-width: 840px;
+  width: 100%;
+  transition: opacity 0.5s ease, border-color 0.5s ease;
+}
+
+.scene2-story-phase {
+  font-family: var(--font-mono, 'Space Grotesk', monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--color-mars-rust, #E07A5F);
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.scene2-story-text {
+  font-family: var(--font-editorial, 'Newsreader', Georgia, serif);
+  font-weight: 300;
+  font-size: clamp(1.15rem, 2.2vw, 1.65rem);
+  line-height: 1.55;
+  letter-spacing: 0.04em;
+  color: #F4F6F8;
+  margin: 0;
+  min-height: 2.8em;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.9);
+}
+
+/* Typewriter cursor */
+.scene2-typewriter-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background-color: var(--color-mars-rust, #E07A5F);
+  margin-left: 4px;
+  vertical-align: middle;
+  animation: scene2CursorBlink 1s infinite;
+}
+
+@keyframes scene2CursorBlink {
+  0%, 45% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+/* Scroll Cue Pill */
+.scene2-scroll-cue {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono, 'Space Grotesk', monospace);
+  font-size: 0.6875rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(200, 86, 50, 0.7);
+  margin-top: 1rem;
+}
+
+.scene2-scroll-arrow {
+  display: inline-block;
+  animation: scene2ArrowBob 2s infinite ease-in-out;
+}
+
+@keyframes scene2ArrowBob {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(4px); }
+}
+
+/* Solar Panel Power Indicator in HUD */
+.scene2-power-hud {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.scene2-power-bar {
+  width: 60px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.scene2-power-fill {
+  height: 100%;
+  background: var(--color-mars-rust, #E07A5F);
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+@media (max-width: 640px) {
+  .scene2-story-card {
+    padding: 1.1rem 1.4rem;
+  }
+  .scene2-mars-story-container {
+    padding: 0 1rem 2rem;
+  }
+}
