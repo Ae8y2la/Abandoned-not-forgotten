@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { references } from '../../data/references.js';
+import { imageCredits, nasaDisclaimer } from '../../data/credits.js';
 
 export default function SourcesModal({ isOpen, onClose }) {
   useEffect(() => {
@@ -35,7 +36,7 @@ export default function SourcesModal({ isOpen, onClose }) {
           backgroundColor: 'var(--color-surface-charcoal)',
           border: '1px solid var(--color-surface-border)',
           borderRadius: 'var(--radius-lg)',
-          maxWidth: '760px',
+          maxWidth: '820px',
           width: '100%',
           maxHeight: '90vh',
           overflowY: 'auto',
@@ -47,10 +48,10 @@ export default function SourcesModal({ isOpen, onClose }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
           <div>
             <span className="badge-tag badge-tag--amber" style={{ marginBottom: '6px' }}>
-              PROVENANCE & CITATIONS
+              PROVENANCE, CITATIONS & CREDITS
             </span>
             <h2 id="sources-title" className="text-headline-3">
-              Verified NASA Primary Sources
+              NASA Primary Sources & Asset Provenance
             </h2>
           </div>
           <button
@@ -70,11 +71,71 @@ export default function SourcesModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        <p className="text-body" style={{ fontSize: '0.875rem', marginBottom: 'var(--space-md)' }}>
-          Every scientific fact, engineering parameter, traverse distance, and coordinate in <em>The Unfinished Mission</em> has been audited against primary NASA archives:
-        </p>
+        {/* Mandatory Project Legal Disclaimer */}
+        <div 
+          style={{
+            backgroundColor: 'rgba(232, 144, 32, 0.08)',
+            border: '1px solid rgba(232, 144, 32, 0.3)',
+            borderRadius: 'var(--radius-sm)',
+            padding: 'var(--space-sm)',
+            fontSize: '0.8125rem',
+            color: 'var(--color-telemetry-silver)',
+            marginBottom: 'var(--space-lg)'
+          }}
+        >
+          <strong style={{ color: 'var(--color-amber-bright)' }}>NASA Educational Project Disclaimer:</strong>
+          <p style={{ marginTop: '4px', margin: 0 }}>
+            {nasaDisclaimer}
+          </p>
+        </div>
 
-        {/* Apollo 15 Sources Table */}
+        {/* Authentic NASA Imagery Credits Table */}
+        <div style={{ marginBottom: 'var(--space-xl)' }}>
+          <h3 style={{ fontSize: '1rem', color: 'var(--color-lunar-amber)', marginBottom: 'var(--space-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+            Authentic NASA Imagery Registry (Zero AI / Third-Party Images)
+          </h3>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {imageCredits.map((img) => (
+              <div
+                key={img.nasaId}
+                style={{
+                  backgroundColor: 'var(--color-surface-elevated)',
+                  border: '1px solid var(--color-surface-border)',
+                  borderRadius: 'var(--radius-sm)',
+                  padding: '10px 14px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  flexWrap: 'wrap',
+                  gap: '8px'
+                }}
+              >
+                <div>
+                  <div style={{ fontWeight: 600, color: 'var(--color-regolith-white)', fontSize: '0.875rem' }}>
+                    {img.title}
+                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>
+                    Credit: {img.creditLine} • <span className="font-telemetry">{img.nasaId}</span> ({img.type.toUpperCase()})
+                  </div>
+                  <div style={{ fontSize: '0.6875rem', color: 'var(--color-muted-slate)' }}>
+                    {img.usageNote}
+                  </div>
+                </div>
+
+                <a
+                  href={img.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ fontSize: '0.75rem' }}
+                >
+                  Verify at images.nasa.gov ↗
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Apollo 15 Technical Documentation */}
         <div style={{ marginBottom: 'var(--space-lg)' }}>
           <h3 style={{ fontSize: '1rem', color: 'var(--color-lunar-amber)', marginBottom: 'var(--space-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
             Apollo 15 Lunar Roving Vehicle Records
@@ -112,22 +173,6 @@ export default function SourcesModal({ isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Mandatory Project Legal Disclaimer */}
-        <div 
-          style={{
-            backgroundColor: 'rgba(232, 144, 32, 0.08)',
-            border: '1px solid rgba(232, 144, 32, 0.25)',
-            borderRadius: 'var(--radius-sm)',
-            padding: 'var(--space-sm)',
-            fontSize: '0.8125rem',
-            color: 'var(--color-telemetry-silver)'
-          }}
-        >
-          <strong style={{ color: 'var(--color-amber-bright)' }}>NASA Educational Project Disclaimer:</strong>
-          <p style={{ marginTop: '4px', margin: 0 }}>
-            {references.disclaimer.text}
-          </p>
-        </div>
       </div>
     </div>
   );
