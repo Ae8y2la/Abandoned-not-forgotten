@@ -282,7 +282,7 @@ export default function LunarRoverSim() {
       </div>
 
       {/* Main Simulation Layout: Tactical Nav Canvas + Telemetry HUD */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1fr) 280px', gap: 'var(--space-md)', alignItems: 'start' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-md)', alignItems: 'start' }}>
         
         {/* Tactical Map Canvas */}
         <div style={{ position: 'relative', width: '100%', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--color-surface-border)' }}>

@@ -489,7 +489,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
             BEAT 3: MISSION (The Traverse Story)
             ================================================================== */}
         <section id="beat-traverse" aria-labelledby="beat-mission-heading" style={{ marginBottom: 'var(--space-3xl)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1.4fr) minmax(260px, 1fr)', gap: 'var(--space-2xl)', alignItems: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-xl)', alignItems: 'center' }}>
             
             <div>
               <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
