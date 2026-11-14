@@ -37,8 +37,8 @@ export default function WorldSelector({ onSelectMission }) {
       statusLabel: 'RESTING IN VALLEY',
       accent: 'var(--color-mars-rust)',
       imageKey: 'opportunity_self_portrait',
-      isAvailable: false,
-      stageNote: 'UNLOCKS IN STAGE 3'
+      isAvailable: true,
+      stageNote: 'AVAILABLE NOW'
     },
     {
       id: 'voyager-1',
@@ -53,8 +53,8 @@ export default function WorldSelector({ onSelectMission }) {
       statusLabel: 'ACTIVE INTERSTELLAR EXPLORER',
       accent: 'var(--color-deep-gold)',
       imageKey: 'voyager1_spacecraft',
-      isAvailable: false,
-      stageNote: 'UNLOCKS IN STAGE 4'
+      isAvailable: true,
+      stageNote: 'AVAILABLE NOW'
     }
   ];
 

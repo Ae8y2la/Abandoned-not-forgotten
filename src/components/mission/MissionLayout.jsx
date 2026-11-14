@@ -3,6 +3,8 @@ import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { MOTION_DURATION, MOTION_EASE, refreshScrollTrigger } from '../../styles/motion.js';
 import LunarRoverSim from '../interactions/LunarRoverSim.jsx';
+import MarsEvidenceLab from '../interactions/MarsEvidenceLab.jsx';
+import InterstellarPing from '../interactions/InterstellarPing.jsx';
 import { imageCredits } from '../../data/credits.js';
 
 export default function MissionLayout({ mission, onBackToSelector, onOpenSources }) {
@@ -10,9 +12,25 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
   const [activeBeat, setActiveBeat] = useState('mystery');
   const articleRef = useRef(null);
 
-  // Find relevant authentic NASA images for this mission
-  const heroImage = imageCredits.find((c) => c.key === 'apollo15_rover_irwin');
-  const secondaryImage = imageCredits.find((c) => c.key === 'apollo15_rover_work');
+  // Map authentic NASA image keys by mission
+  const imageMap = {
+    'apollo-15-lrv': {
+      heroKey: 'apollo15_rover_irwin',
+      secondaryKey: 'apollo15_rover_work'
+    },
+    'opportunity-mer': {
+      heroKey: 'opportunity_self_portrait',
+      secondaryKey: 'opportunity_perseverance_valley'
+    },
+    'voyager-1': {
+      heroKey: 'voyager1_spacecraft',
+      secondaryKey: null
+    }
+  };
+
+  const currentMap = imageMap[mission.id] || imageMap['apollo-15-lrv'];
+  const heroImage = imageCredits.find((c) => c.key === currentMap.heroKey);
+  const secondaryImage = currentMap.secondaryKey ? imageCredits.find((c) => c.key === currentMap.secondaryKey) : null;
 
   useEffect(() => {
     const el = articleRef.current;
@@ -82,7 +100,6 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
     });
 
     mm.add('(prefers-reduced-motion: reduce)', () => {
-      // Static baseline without scrub, scale, or opacity animations
       const heroImg = el.querySelector('.hero-photo-img');
       if (heroImg) gsap.set(heroImg, { scale: 1 });
       const factCards = el.querySelectorAll('.scroll-reveal-card');
@@ -100,23 +117,9 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
       case 'apollo-15-lrv':
         return <LunarRoverSim />;
       case 'opportunity-mer':
-        return (
-          <div style={{ padding: 'var(--space-xl)', textAlign: 'center', backgroundColor: 'var(--color-surface-charcoal)', borderRadius: 'var(--radius-md)' }}>
-            <span className="badge-tag badge-tag--amber">STAGE 3 IN PROGRESS</span>
-            <p style={{ marginTop: 'var(--space-sm)', color: 'var(--color-telemetry-silver)' }}>
-              Opportunity "Investigate the Martian Evidence" interaction is queued for Stage 3.
-            </p>
-          </div>
-        );
+        return <MarsEvidenceLab />;
       case 'voyager-1':
-        return (
-          <div style={{ padding: 'var(--space-xl)', textAlign: 'center', backgroundColor: 'var(--color-surface-charcoal)', borderRadius: 'var(--radius-md)' }}>
-            <span className="badge-tag badge-tag--amber">STAGE 4 IN PROGRESS</span>
-            <p style={{ marginTop: 'var(--space-sm)', color: 'var(--color-telemetry-silver)' }}>
-              Voyager 1 "Follow the Signal" telemetry interaction is queued for Stage 4.
-            </p>
-          </div>
-        );
+        return <InterstellarPing />;
       default:
         return null;
     }
@@ -169,9 +172,9 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
                 style={{
                   padding: '3px 8px',
                   fontSize: '0.6875rem',
-                  borderColor: activeBeat === beat.key ? 'var(--color-lunar-amber)' : 'var(--color-surface-border-subtle)',
-                  color: activeBeat === beat.key ? 'var(--color-amber-bright)' : 'var(--color-muted-slate)',
-                  backgroundColor: activeBeat === beat.key ? 'rgba(232, 144, 32, 0.1)' : 'transparent',
+                  borderColor: activeBeat === beat.key ? mission.accentColor : 'var(--color-surface-border-subtle)',
+                  color: activeBeat === beat.key ? 'var(--color-regolith-white)' : 'var(--color-muted-slate)',
+                  backgroundColor: activeBeat === beat.key ? 'rgba(255, 255, 255, 0.08)' : 'transparent',
                   transition: 'all var(--transition-fast)'
                 }}
               >
@@ -233,20 +236,20 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
                 color: 'var(--color-telemetry-silver)'
               }}
             >
-              Photo: {heroImage.creditLine} ({heroImage.nasaId})
+              {heroImage.type === 'illustration' ? 'Illustration' : 'Photo'}: {heroImage.creditLine} ({heroImage.nasaId})
             </div>
           </div>
         )}
 
         <div className="site-container" style={{ position: 'relative', marginTop: '-120px', paddingBottom: 'var(--space-xl)' }}>
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', alignItems: 'center', marginBottom: 'var(--space-sm)' }}>
-            <span className="badge-tag badge-tag--amber">
+            <span className="badge-tag" style={{ borderColor: mission.accentColor, color: 'var(--color-regolith-white)' }}>
               {mission.destinationSector}
             </span>
             <span className="badge-tag">
               LIGHT DELAY: {mission.lightTime}
             </span>
-            <span className="badge-tag" style={{ color: 'var(--color-status-parked)' }}>
+            <span className="badge-tag" style={{ color: 'var(--color-amber-bright)' }}>
               ● {mission.statusBadge}
             </span>
           </div>
@@ -258,7 +261,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-md)', alignItems: 'center', color: 'var(--color-telemetry-silver)', fontSize: '0.9375rem' }}>
             <span><strong>Designation:</strong> {mission.designation}</span>
             <span>•</span>
-            <span><strong>Landed:</strong> {mission.landingDate}</span>
+            <span><strong>Departure/Landed:</strong> {mission.landingDate}</span>
             <span>•</span>
             <span><strong>Location:</strong> {mission.locationName}</span>
           </div>
@@ -271,7 +274,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
             BEAT 1: MYSTERY (The Hook / The Enigma)
             ================================================================== */}
         <section id="beat-mystery" aria-labelledby="beat-mystery-heading" style={{ marginBottom: 'var(--space-3xl)', maxWidth: '820px' }}>
-          <div className="font-telemetry" style={{ color: 'var(--color-lunar-amber)', marginBottom: 'var(--space-xs)' }}>
+          <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
             STAGE 01 · THE ENIGMA
           </div>
           <h2 id="beat-mystery-heading" className="text-display-2" style={{ marginBottom: 'var(--space-md)' }}>
@@ -296,7 +299,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
             padding: 'var(--space-xl)'
           }}
         >
-          <div className="font-telemetry" style={{ color: 'var(--color-lunar-amber)', marginBottom: 'var(--space-xs)' }}>
+          <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
             STAGE 02 · HARDWARE ARCHITECTURE
           </div>
           <h2 id="beat-machine-heading" className="text-headline-3" style={{ fontSize: 'clamp(1.5rem, 2.5vw, 2.25rem)', marginBottom: 'var(--space-xs)' }}>
@@ -323,12 +326,13 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
                       textAlign: 'left',
                       padding: '14px 18px',
                       backgroundColor: isSelected ? 'var(--color-surface-elevated)' : 'transparent',
-                      border: `1px solid ${isSelected ? 'var(--color-lunar-amber)' : 'var(--color-surface-border)'}`,
+                      border: `1px solid ${isSelected ? mission.accentColor : 'var(--color-surface-border)'}`,
                       borderRadius: 'var(--radius-sm)',
                       transition: 'all var(--transition-fast)',
                       display: 'flex',
                       justifyContent: 'space-between',
-                      alignItems: 'center'
+                      alignItems: 'center',
+                      cursor: 'pointer'
                     }}
                   >
                     <div>
@@ -360,7 +364,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
               }}
             >
               <div>
-                <span className="badge-tag badge-tag--amber" style={{ marginBottom: 'var(--space-sm)' }}>
+                <span className="badge-tag" style={{ marginBottom: 'var(--space-sm)', borderColor: mission.accentColor }}>
                   COMPONENT ANALYSIS · {mission.machine.specs[activeSpecIndex]?.metric}
                 </span>
                 <h3 style={{ fontSize: '1.25rem', color: 'var(--color-regolith-white)', marginBottom: 'var(--space-sm)' }}>
@@ -380,7 +384,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
                   color: 'var(--color-muted-slate)'
                 }}
               >
-                Audited against NASA Apollo 15 Press Kit (71-119K) and Technical Note TN D-7469.
+                Audited against primary NASA technical reports and mission manuals.
               </div>
             </div>
 
@@ -394,7 +398,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
           <div style={{ display: 'grid', gridTemplateColumns: 'minmax(300px, 1.4fr) minmax(260px, 1fr)', gap: 'var(--space-2xl)', alignItems: 'center' }}>
             
             <div>
-              <div className="font-telemetry" style={{ color: 'var(--color-lunar-amber)', marginBottom: 'var(--space-xs)' }}>
+              <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
                 STAGE 03 · THE TRAVERSE
               </div>
               <h2 id="beat-mission-heading" className="text-display-2" style={{ marginBottom: 'var(--space-md)' }}>
@@ -432,40 +436,29 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
               }}
             >
               <div className="font-telemetry" style={{ color: 'var(--color-telemetry-silver)', marginBottom: 'var(--space-md)' }}>
-                TRAVERSE LOG · VERIFIED DATA
+                MISSION LOG · VERIFIED DATA
               </div>
 
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>TOTAL ODOMETER</div>
-                  <div className="font-telemetry" style={{ fontSize: '1.5rem', color: 'var(--color-amber-bright)', fontWeight: 700 }}>
-                    27.9 km
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-muted-slate)' }}>17.3 miles driven</div>
-                </div>
-
-                <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>SAMPLES RETURNED</div>
-                  <div className="font-telemetry" style={{ fontSize: '1.5rem', color: 'var(--color-regolith-white)', fontWeight: 700 }}>
-                    77 kg
-                  </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-muted-slate)' }}>Documented rock samples</div>
-                </div>
-
-                <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>SURFACE STAY</div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>DURATION</div>
                   <div className="font-telemetry" style={{ fontSize: '1.25rem', color: 'var(--color-regolith-white)', fontWeight: 600 }}>
-                    66h 54m
+                    {mission.surfaceDuration}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-muted-slate)' }}>3 EVAs on surface</div>
                 </div>
 
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>WALK-BACK SAFETY</div>
-                  <div className="font-telemetry" style={{ fontSize: '1.25rem', color: '#60A5FA', fontWeight: 600 }}>
-                    5.0 km
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>COMMUNICATION DELAY</div>
+                  <div className="font-telemetry" style={{ fontSize: '1.25rem', color: 'var(--color-amber-bright)', fontWeight: 600 }}>
+                    {mission.lightTime}
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-muted-slate)' }}>Max separation radius</div>
+                </div>
+
+                <div style={{ gridColumn: 'span 2', borderTop: '1px solid var(--color-surface-border)', paddingTop: '8px' }}>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>PRIMARY SCIENTIFIC MANDATE</div>
+                  <div style={{ fontSize: '0.875rem', color: 'var(--color-regolith-white)', marginTop: '2px' }}>
+                    {mission.thematicSnippet}
+                  </div>
                 </div>
               </div>
             </div>
@@ -477,7 +470,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
             BEAT 4: EXPERIENCE THE MISSION (Interactive Simulator)
             ================================================================== */}
         <section id="beat-interaction" aria-labelledby="beat-interaction-heading" style={{ marginBottom: 'var(--space-3xl)' }}>
-          <div className="font-telemetry" style={{ color: 'var(--color-lunar-amber)', marginBottom: 'var(--space-xs)' }}>
+          <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
             STAGE 04 · INTERACTIVE FLIGHT MODEL
           </div>
           <h2 id="beat-interaction-heading" className="text-display-2" style={{ marginBottom: 'var(--space-xs)' }}>
@@ -495,7 +488,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
             BEAT 5: DISCOVER THE SCIENCE (Verified Discoveries & Takeaway)
             ================================================================== */}
         <section id="beat-science" aria-labelledby="beat-science-heading" style={{ marginBottom: 'var(--space-3xl)' }}>
-          <div className="font-telemetry" style={{ color: 'var(--color-lunar-amber)', marginBottom: 'var(--space-xs)' }}>
+          <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
             STAGE 05 · SCIENTIFIC REVELATION
           </div>
           <h2 id="beat-science-heading" className="text-display-2" style={{ marginBottom: 'var(--space-md)' }}>
@@ -514,7 +507,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
                   padding: 'var(--space-lg)'
                 }}
               >
-                <div className="font-telemetry" style={{ color: 'var(--color-lunar-amber)', marginBottom: '6px' }}>
+                <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: '6px' }}>
                   DISCOVERY 0{index + 1}
                 </div>
                 <h3 style={{ fontSize: '1.25rem', color: 'var(--color-regolith-white)', marginBottom: 'var(--space-xs)' }}>
@@ -533,8 +526,8 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
           {/* Concise Educational Takeaway Callout */}
           <div 
             style={{
-              backgroundColor: 'rgba(232, 144, 32, 0.08)',
-              border: '2px solid var(--color-lunar-amber)',
+              backgroundColor: 'rgba(255, 255, 255, 0.04)',
+              border: `2px solid ${mission.accentColor}`,
               borderRadius: 'var(--radius-md)',
               padding: 'var(--space-xl)',
               textAlign: 'center',
@@ -577,14 +570,14 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
 
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-md)', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--color-surface-border)', paddingTop: 'var(--space-md)' }}>
             <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>OFFICIAL SURFACE COORDINATES</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>OFFICIAL COORDINATES</div>
               <div className="font-telemetry" style={{ fontSize: '1.1rem', color: 'var(--color-amber-bright)' }}>
                 {mission.legacy.verifiedCoordinates}
               </div>
             </div>
 
             <div>
-              <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>ORBITAL PHOTOGRAPHIC VERIFICATION</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>VERIFICATION REFERENCE</div>
               <div style={{ fontSize: '0.875rem', color: 'var(--color-regolith-white)' }}>
                 {mission.legacy.lrocReference}
               </div>

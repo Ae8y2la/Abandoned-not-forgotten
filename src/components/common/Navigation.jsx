@@ -8,7 +8,7 @@ export default function Navigation({ activeMissionId, onSelectMission, onOpenSou
         position: 'sticky',
         top: 0,
         zIndex: 100,
-        backgroundColor: 'rgba(11, 13, 17, 0.92)',
+        backgroundColor: 'rgba(11, 13, 17, 0.94)',
         backdropFilter: 'blur(8px)',
         borderBottom: '1px solid var(--color-surface-border-subtle)',
         padding: '12px 0'
@@ -20,7 +20,7 @@ export default function Navigation({ activeMissionId, onSelectMission, onOpenSou
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           <button 
             onClick={() => onSelectMission && onSelectMission('home')}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', textAlign: 'left' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', textAlign: 'left', cursor: 'pointer' }}
             aria-label="The Unfinished Mission Home"
           >
             <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'var(--color-lunar-amber)', display: 'inline-block' }} />
@@ -28,13 +28,10 @@ export default function Navigation({ activeMissionId, onSelectMission, onOpenSou
               THE UNFINISHED MISSION
             </span>
           </button>
-          <span className="badge-tag" style={{ display: 'none', padding: '2px 8px', fontSize: '0.6875rem' }}>
-            NASA SPACE APPS 2026
-          </span>
         </div>
 
         {/* Mission Destination Switcher */}
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
           <button
             onClick={() => onSelectMission && onSelectMission('apollo-15-lrv')}
             className={`badge-tag ${activeMissionId === 'apollo-15-lrv' ? 'badge-tag--amber' : ''}`}
@@ -45,19 +42,19 @@ export default function Navigation({ activeMissionId, onSelectMission, onOpenSou
           </button>
 
           <button
-            disabled
-            title="Stage 3 will unlock Mars Opportunity"
-            className="badge-tag"
-            style={{ opacity: 0.45, cursor: 'not-allowed', padding: '6px 12px' }}
+            onClick={() => onSelectMission && onSelectMission('opportunity-mer')}
+            className={`badge-tag ${activeMissionId === 'opportunity-mer' ? 'badge-tag--amber' : ''}`}
+            style={{ cursor: 'pointer', padding: '6px 12px' }}
+            aria-current={activeMissionId === 'opportunity-mer' ? 'page' : undefined}
           >
             02 MARS · OPPORTUNITY
           </button>
 
           <button
-            disabled
-            title="Stage 4 will unlock Deep Space Voyager 1"
-            className="badge-tag"
-            style={{ opacity: 0.45, cursor: 'not-allowed', padding: '6px 12px' }}
+            onClick={() => onSelectMission && onSelectMission('voyager-1')}
+            className={`badge-tag ${activeMissionId === 'voyager-1' ? 'badge-tag--amber' : ''}`}
+            style={{ cursor: 'pointer', padding: '6px 12px' }}
+            aria-current={activeMissionId === 'voyager-1' ? 'page' : undefined}
           >
             03 DEEP SPACE · VOYAGER 1
           </button>
