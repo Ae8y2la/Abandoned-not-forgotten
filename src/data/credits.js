@@ -82,10 +82,77 @@ export const imageCredits = [
     heroFile: "/assets/nasa/voyager1_spacecraft_1920.webp",
     smallFile: "/assets/nasa/voyager1_spacecraft_800.webp",
     altText: "Artist concept illustration of NASA's Voyager 1 spacecraft with its 3.7-meter high-gain antenna, traversing the boundary of interstellar space."
+  },
+  {
+    key: "the_signal_deepfield",
+    title: "Hubble Goes to the eXtreme to Assemble Farthest-Ever View of the Universe",
+    nasaId: "GSFC_20171208_Archive_e001651",
+    mission: "Cosmic Background",
+    type: "photograph",
+    sourceUrl: "https://images.nasa.gov/details-GSFC_20171208_Archive_e001651",
+    creditLine: "NASA / ESA / G. Illingworth, D. Magee, and P. Oesch (UCSC) / R. Bouwens (Leiden Univ.) / HUDF09 Team",
+    usageNote: "Public Domain NASA / ESA Hubble eXtreme Deep Field (XDF) compilation.",
+    heroFile: "/assets/nasa/the_signal_deepfield_1920.webp",
+    smallFile: "/assets/nasa/the_signal_deepfield_800.webp",
+    altText: "Hubble eXtreme Deep Field showing thousands of distant galaxies against the black void of deep space."
+  },
+  {
+    key: "apollo15_hadley_rille",
+    title: "Telephoto view across Hadley Rille photographed during Apollo 15 EVA",
+    nasaId: "as15-89-12100",
+    mission: "Apollo 15",
+    type: "photograph",
+    sourceUrl: "https://images.nasa.gov/details-as15-89-12100",
+    creditLine: "NASA / Apollo 15 Crew",
+    usageNote: "Public Domain (NASA Johnson Space Center Apollo 15 surface photography, 2 August 1971).",
+    heroFile: "/assets/nasa/apollo15_hadley_rille_1920.webp",
+    smallFile: "/assets/nasa/apollo15_hadley_rille_800.webp",
+    altText: "Telephoto view looking across the deep volcanic canyon of Hadley Rille on the lunar surface during Apollo 15."
+  },
+  {
+    key: "opportunity_dust_storm",
+    title: "Shades of Martian Darkness (Simulated Views of Martian Sky During 2018 Dust Storm)",
+    nasaId: "PIA22521",
+    mission: "Opportunity (MER-B)",
+    type: "simulation",
+    sourceUrl: "https://images.nasa.gov/details-PIA22521",
+    creditLine: "NASA / JPL-Caltech / TAMU",
+    usageNote: "Public Domain (Radiative transfer atmospheric model from Opportunity Pancam tau observations, June 2018).",
+    heroFile: "/assets/nasa/opportunity_dust_storm_1920.webp",
+    smallFile: "/assets/nasa/opportunity_dust_storm_800.webp",
+    altText: "Simulated sequence of views showing the Martian sky turning from daytime amber to pitch black as the 2018 global dust storm blotted out the Sun."
+  },
+  {
+    key: "opportunity_homestake_vein",
+    title: "Homestake Vein in Color",
+    nasaId: "PIA15033",
+    mission: "Opportunity (MER-B)",
+    type: "photograph",
+    sourceUrl: "https://images.nasa.gov/details-PIA15033",
+    creditLine: "NASA / JPL-Caltech / Cornell Univ. / Arizona State Univ.",
+    usageNote: "Public Domain (Opportunity Pancam false-color image of gypsum fracture vein on Endeavour Crater rim).",
+    heroFile: "/assets/nasa/opportunity_homestake_vein_1920.webp",
+    smallFile: "/assets/nasa/opportunity_homestake_vein_800.webp",
+    altText: "False-color Pancam view of the bright white Homestake gypsum mineral vein protruding from Martian bedrock on Cape York."
+  },
+  {
+    key: "voyager1_pale_blue_dot",
+    title: "Pale Blue Dot Revisited",
+    nasaId: "PIA23645",
+    mission: "Voyager 1",
+    type: "photograph",
+    sourceUrl: "https://images.nasa.gov/details-PIA23645",
+    creditLine: "NASA / JPL-Caltech",
+    usageNote: "Public Domain (Voyager 1 Imaging Science Subsystem remastered for 30th anniversary).",
+    heroFile: "/assets/nasa/voyager1_pale_blue_dot_1920.webp",
+    smallFile: "/assets/nasa/voyager1_pale_blue_dot_800.webp",
+    altText: "The Earth appears as a tiny crescent of light, occupying only 0.12 pixel, suspended in a scattered ray of sunlight 6 billion kilometers away."
   }
 ];
 
 export const nasaDisclaimer = "Independent educational project created for the NASA Space Apps Challenge; NASA names and imagery are used for educational purposes with attribution; this does not imply NASA endorsement.";
+
+export const aiDisclosure = "Parts of this project were built with AI assistance (Claude, Antigravity). All images are NASA imagery with credits. All factual content was checked against NASA sources by the team.";
 
 // Helper to get image record by key
 export const getImageCredit = (key) => imageCredits.find((c) => c.key === key);

@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { references } from '../../data/references.js';
-import { imageCredits, nasaDisclaimer } from '../../data/credits.js';
+import { imageCredits, nasaDisclaimer, aiDisclosure } from '../../data/credits.js';
 
 export default function SourcesModal({ isOpen, onClose }) {
   useEffect(() => {
@@ -36,7 +36,7 @@ export default function SourcesModal({ isOpen, onClose }) {
           backgroundColor: 'var(--color-surface-charcoal)',
           border: '1px solid var(--color-surface-border)',
           borderRadius: 'var(--radius-lg)',
-          maxWidth: '820px',
+          maxWidth: '860px',
           width: '100%',
           maxHeight: '90vh',
           overflowY: 'auto',
@@ -45,6 +45,7 @@ export default function SourcesModal({ isOpen, onClose }) {
         }}
         onClick={(e) => e.stopPropagation()}
       >
+        {/* Header */}
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
           <div>
             <span className="badge-tag badge-tag--amber" style={{ marginBottom: '6px' }}>
@@ -80,7 +81,7 @@ export default function SourcesModal({ isOpen, onClose }) {
             padding: 'var(--space-sm)',
             fontSize: '0.8125rem',
             color: 'var(--color-telemetry-silver)',
-            marginBottom: 'var(--space-lg)'
+            marginBottom: 'var(--space-sm)'
           }}
         >
           <strong style={{ color: 'var(--color-amber-bright)' }}>NASA Educational Project Disclaimer:</strong>
@@ -89,15 +90,33 @@ export default function SourcesModal({ isOpen, onClose }) {
           </p>
         </div>
 
+        {/* AI-Use Policy Line */}
+        <div
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.04)',
+            border: '1px solid var(--color-surface-border)',
+            borderRadius: 'var(--radius-sm)',
+            padding: 'var(--space-sm)',
+            fontSize: '0.8125rem',
+            color: 'var(--color-telemetry-silver)',
+            marginBottom: 'var(--space-lg)'
+          }}
+        >
+          <strong style={{ color: 'var(--color-regolith-white)' }}>Project AI-Use & Research Standard:</strong>
+          <p style={{ marginTop: '4px', margin: 0 }}>
+            {aiDisclosure}
+          </p>
+        </div>
+
         {/* Authentic NASA Imagery Credits Table */}
         <div style={{ marginBottom: 'var(--space-xl)' }}>
           <h3 style={{ fontSize: '1rem', color: 'var(--color-lunar-amber)', marginBottom: 'var(--space-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            Authentic NASA Imagery Registry (Zero AI / Third-Party Images)
+            Authentic NASA Imagery Registry (Zero AI / Synthetic Media)
           </h3>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {imageCredits.map((img) => (
               <div
-                key={img.nasaId}
+                key={img.key}
                 style={{
                   backgroundColor: 'var(--color-surface-elevated)',
                   border: '1px solid var(--color-surface-border)',
@@ -110,68 +129,90 @@ export default function SourcesModal({ isOpen, onClose }) {
                   gap: '8px'
                 }}
               >
-                <div>
-                  <div style={{ fontWeight: 600, color: 'var(--color-regolith-white)', fontSize: '0.875rem' }}>
-                    {img.title}
+                <div style={{ maxWidth: '580px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '2px' }}>
+                    <span style={{ fontWeight: 600, color: 'var(--color-regolith-white)', fontSize: '0.875rem' }}>
+                      {img.title}
+                    </span>
+                    <span 
+                      style={{ 
+                        fontSize: '0.6875rem', 
+                        padding: '2px 6px', 
+                        borderRadius: '2px',
+                        backgroundColor: img.type === 'photograph' ? 'rgba(74, 155, 222, 0.15)' : 'rgba(232, 144, 32, 0.15)',
+                        color: img.type === 'photograph' ? '#7eb3e6' : 'var(--color-amber-bright)',
+                        fontWeight: 600,
+                        textTransform: 'uppercase'
+                      }}
+                    >
+                      {img.type === 'illustration' ? "Artist's Concept" : img.type}
+                    </span>
                   </div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>
-                    Credit: {img.creditLine} • <span className="font-telemetry">{img.nasaId}</span> ({img.type.toUpperCase()})
-                  </div>
-                  <div style={{ fontSize: '0.6875rem', color: 'var(--color-muted-slate)' }}>
-                    {img.usageNote}
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-muted-slate)' }}>
+                    NASA ID: <code>{img.nasaId}</code> · Credit: {img.creditLine}
                   </div>
                 </div>
-
                 <a
                   href={img.sourceUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  style={{ fontSize: '0.75rem' }}
+                  style={{ fontSize: '0.8125rem', whiteSpace: 'nowrap' }}
                 >
-                  Verify at images.nasa.gov ↗
+                  Verify at NASA ↗
                 </a>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Apollo 15 Technical Documentation */}
-        <div style={{ marginBottom: 'var(--space-lg)' }}>
-          <h3 style={{ fontSize: '1rem', color: 'var(--color-lunar-amber)', marginBottom: 'var(--space-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
-            Apollo 15 Lunar Roving Vehicle Records
-          </h3>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-            {references.apollo15.sources.map((src) => (
-              <div 
-                key={src.id}
-                style={{
-                  backgroundColor: 'var(--color-surface-elevated)',
-                  border: '1px solid var(--color-surface-border)',
-                  borderRadius: 'var(--radius-sm)',
-                  padding: '12px 16px'
-                }}
-              >
-                <div style={{ fontWeight: 600, color: 'var(--color-regolith-white)', fontSize: '0.9375rem', marginBottom: '4px' }}>
-                  {src.title}
-                </div>
-                <div style={{ fontSize: '0.8125rem', color: 'var(--color-telemetry-silver)', marginBottom: '6px' }}>
-                  {src.authors ? `${src.authors} · ` : ''}{src.organization} ({src.year})
-                </div>
-                <div style={{ fontSize: '0.8125rem', color: 'var(--color-muted-slate)', marginBottom: '8px' }}>
-                  <strong>Verified Parameters:</strong> {src.verifiedNote}
-                </div>
-                <a 
-                  href={src.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  style={{ fontSize: '0.8125rem' }}
-                >
-                  Inspect NASA Technical Archive Document ↗
-                </a>
+        {/* Section: Primary Research Dossiers */}
+        {['apollo15', 'opportunity', 'voyager1'].map((sectionKey) => {
+          const sectionData = references[sectionKey];
+          if (!sectionData) return null;
+          const titles = {
+            apollo15: 'Apollo 15 Lunar Roving Vehicle Records',
+            opportunity: 'Opportunity (MER-B) Mars Exploration Records',
+            voyager1: 'Voyager 1 Interstellar Mission Records'
+          };
+          return (
+            <div key={sectionKey} style={{ marginBottom: 'var(--space-lg)' }}>
+              <h3 style={{ fontSize: '1rem', color: 'var(--color-lunar-amber)', marginBottom: 'var(--space-xs)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>
+                {titles[sectionKey]}
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
+                {sectionData.sources.map((src) => (
+                  <div 
+                    key={src.id}
+                    style={{
+                      backgroundColor: 'var(--color-surface-elevated)',
+                      border: '1px solid var(--color-surface-border)',
+                      borderRadius: 'var(--radius-sm)',
+                      padding: '12px 16px'
+                    }}
+                  >
+                    <div style={{ fontWeight: 600, color: 'var(--color-regolith-white)', fontSize: '0.9375rem', marginBottom: '4px' }}>
+                      {src.title}
+                    </div>
+                    <div style={{ fontSize: '0.8125rem', color: 'var(--color-telemetry-silver)', marginBottom: '6px' }}>
+                      {src.authors ? `${src.authors} · ` : ''}{src.organization} ({src.year})
+                    </div>
+                    <div style={{ fontSize: '0.8125rem', color: 'var(--color-muted-slate)', marginBottom: '8px' }}>
+                      <strong>Verified Parameters:</strong> {src.verifiedNote}
+                    </div>
+                    <a 
+                      href={src.url} 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      style={{ fontSize: '0.8125rem' }}
+                    >
+                      Inspect NASA Archive Source ↗
+                    </a>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        </div>
+            </div>
+          );
+        })}
 
       </div>
     </div>

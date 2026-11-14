@@ -8,7 +8,7 @@ import MissionLayout from './components/mission/MissionLayout.jsx';
 import { missions, getMissionById } from './data/missions.js';
 
 export default function App() {
-  const [viewMode, setViewMode] = useState('signal'); // 'signal' | 'selector' | 'mission'
+  const [viewMode, setViewMode] = useState('home'); // 'home' | 'mission'
   const [activeMissionId, setActiveMissionId] = useState('apollo-15-lrv');
   const [isSourcesOpen, setIsSourcesOpen] = useState(false);
 
@@ -17,23 +17,33 @@ export default function App() {
 
   // Navigation handlers
   const handleEnterMission = () => {
-    setViewMode('selector');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const el = document.getElementById('choose-your-world');
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
+    }
   };
 
   const handleSelectMission = (id) => {
     if (id === 'home' || id === 'selector') {
-      setViewMode('selector');
+      setViewMode('home');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       setActiveMissionId(id);
       setViewMode('mission');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handleBackToSelector = () => {
-    setViewMode('selector');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    setViewMode('home');
+    setTimeout(() => {
+      const el = document.getElementById('choose-your-world');
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      } else {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+    }, 50);
   };
 
   return (
@@ -48,15 +58,16 @@ export default function App() {
 
       {/* Main Dynamic Viewport */}
       <main style={{ flex: 1 }}>
-        {viewMode === 'signal' && (
-          <SignalScene onEnter={handleEnterMission} />
-        )}
-
-        {viewMode === 'selector' && (
-          <WorldSelector 
-            missions={missions} 
-            onSelectMission={handleSelectMission} 
-          />
+        {viewMode === 'home' && (
+          <>
+            <SignalScene onEnter={handleEnterMission} />
+            <div id="choose-your-world">
+              <WorldSelector 
+                missions={missions} 
+                onSelectMission={handleSelectMission} 
+              />
+            </div>
+          </>
         )}
 
         {viewMode === 'mission' && currentMission && (

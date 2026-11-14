@@ -17,7 +17,8 @@ export const missions = [
     lightTime: "1.3 light-seconds",
     landingDate: "30 July 1971",
     departureDate: "2 August 1971",
-    surfaceDuration: "66 hours, 54 minutes",
+    surfaceDuration: "Nearly 67 hours (66h 54m 54s MSC-05161 / 66h 55m NSSDCA)",
+    sampleMass: "77.31 kg of lunar samples returned",
     statusBadge: "Parked on Lunar Surface",
     statusType: "PARKED",
     coordinates: "26.13174°N, 3.63803°E",
@@ -110,7 +111,9 @@ export const missions = [
     // Beat 6: The Legacy & Verified Provenance
     legacy: {
       headline: "Still on the Moon: Station 9A",
-      statusStatement: "The Apollo 15 LRV remains where Dave Scott parked it on 2 August 1971: exactly 550 meters east of the Lunar Module descent stage at 26.13174°N, 3.63803°E. Its color TV camera recorded the historic liftoff of Falcon, and in 2010, NASA's Lunar Reconnaissance Orbiter photographed the rover and its dual wheel tracks still clearly etched into the vacuum of Hadley.",
+      statusStatement: "The Apollo 15 LRV remains where Dave Scott parked it on 2 August 1971: 165 meters east of the Lunar Module descent stage at 26.13174°N, 3.63803°E. Its color TV camera recorded the historic liftoff of Falcon, and in 2010, NASA's Lunar Reconnaissance Orbiter photographed the rover and its dual wheel tracks still clearly etched into the vacuum of Hadley.",
+      alsoLeftBehind: "Falcon Lunar Module descent stage and the Apollo Lunar Surface Experiments Package (ALSEP) station, which operated until NASA commanded shutdown on 30 September 1977.",
+      sampleYield: "77.31 kg (170.4 lb) of verified lunar specimens returned to Earth (NSSDCA 1971-063C).",
       verifiedCoordinates: "26.13174° N, 3.63803° E (Elevation -1,928 m)",
       lrocReference: "NASA / GSFC / Arizona State University LROC NAC Frame M175252641L",
       primarySourceCount: 5
@@ -124,14 +127,14 @@ export const missions = [
     machineName: "Opportunity Mars Exploration Rover",
     designation: "MER-B / NASA Jet Propulsion Laboratory",
     lightTime: "~12.5 light-minutes",
-    landingDate: "25 January 2004 UTC",
+    landingDate: "24 January 2004 PST (25 Jan UTC)",
     departureDate: "10 June 2018 (Final transmission)",
-    surfaceDuration: "14 years, 195 days (5,111 Sols)",
+    surfaceDuration: "More than 14 years (5,111 Sols)",
     statusBadge: "Resting in Perseverance Valley",
     statusType: "RESTING",
     coordinates: "1.9483°S, 354.4742°E",
     locationName: "Perseverance Valley · Endeavour Crater Rim",
-    thematicSnippet: "15 Years of Following the Water",
+    thematicSnippet: "14+ Years of Following the Water",
     accentColor: "var(--color-mars-rust)",
 
     // Beat 1: Mystery (40-70 words)
@@ -219,7 +222,7 @@ export const missions = [
     // Beat 6: The Legacy & Verified Provenance
     legacy: {
       headline: "Resting in Perseverance Valley",
-      statusStatement: "Opportunity rests quietly in Perseverance Valley on the western rim of Endeavour Crater at 1.9483°S, 354.4742°E. Operating for nearly 15 years—more than 55 times its planned 90-sol design lifespan—it drove 28.06 miles (45.16 km), the first vehicle to complete an off-world marathon.",
+      statusStatement: "Opportunity rests quietly in Perseverance Valley on the western rim of Endeavour Crater at 1.9483°S, 354.4742°E. Operating for more than 14 years—over 55 times its planned 90-sol design lifespan—it drove 28.06 miles (45.16 km), completing the first off-world marathon. (NASA's Perseverance rover surpassed this driving record on 11 October 2026 at 28.10 miles / 45.22 km). Over 835 recovery commands were radiated during the active listening window before final decommissioning on 13 February 2019.",
       verifiedCoordinates: "1.9483° S, 354.4742° E (Endeavour Rim)",
       lrocReference: "Photographed from Mars orbit by NASA Mars Reconnaissance Orbiter (HiRISE ESP_056955_1775).",
       primarySourceCount: 6
