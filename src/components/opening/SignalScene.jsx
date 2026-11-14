@@ -1,30 +1,95 @@
-import React, { useEffect, useState } from 'react';
+import React, { useRef, useEffect } from 'react';
+import { gsap } from 'gsap';
+import { MOTION_DURATION, MOTION_EASE } from '../../styles/motion.js';
 
 export default function SignalScene({ onEnter }) {
-  const [typedStage, setTypedStage] = useState(() => {
-    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return 2;
-    }
-    return 0;
-  });
+  const containerRef = useRef(null);
+  const pathRef = useRef(null);
+  const pulseDotRef = useRef(null);
 
   useEffect(() => {
-    if (typedStage === 2) return;
+    const el = containerRef.current;
+    if (!el) return;
 
-    const t1 = setTimeout(() => setTypedStage(1), 600);
-    const t2 = setTimeout(() => setTypedStage(2), 2200);
+    // Accessible matchMedia context
+    const mm = gsap.matchMedia();
 
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
-  }, [typedStage]);
+    mm.add('(prefers-reduced-motion: no-preference)', () => {
+      // 1. Slow amber pulse on the carrier status dot
+      if (pulseDotRef.current) {
+        gsap.to(pulseDotRef.current, {
+          opacity: 0.35,
+          scale: 0.85,
+          repeat: -1,
+          yoyo: true,
+          duration: 1.4,
+          ease: MOTION_EASE.smooth
+        });
+      }
+
+      // 2. SVG waveform self-drawing setup
+      if (pathRef.current) {
+        const length = pathRef.current.getTotalLength ? pathRef.current.getTotalLength() : 450;
+        gsap.set(pathRef.current, {
+          strokeDasharray: length,
+          strokeDashoffset: length
+        });
+      }
+
+      // 3. Staggered reveal timeline
+      const tl = gsap.timeline({ defaults: { ease: MOTION_EASE.editorial } });
+
+      tl.fromTo('.signal-telemetry-bar', 
+        { opacity: 0, y: -6 }, 
+        { opacity: 1, y: 0, duration: MOTION_DURATION.medium }
+      )
+      .to(pathRef.current, {
+        strokeDashoffset: 0,
+        duration: MOTION_DURATION.deliberate,
+        ease: 'power1.inOut'
+      }, '-=0.1')
+      .fromTo('.signal-headline', 
+        { opacity: 0, y: 16 }, 
+        { opacity: 1, y: 0, duration: MOTION_DURATION.slow }, 
+        '-=0.4'
+      )
+      .fromTo('.signal-body', 
+        { opacity: 0, y: 12 }, 
+        { opacity: 1, y: 0, duration: MOTION_DURATION.medium }, 
+        '-=0.2'
+      )
+      .fromTo('.signal-cta', 
+        { opacity: 0, y: 10 }, 
+        { opacity: 1, y: 0, duration: MOTION_DURATION.medium }, 
+        '-=0.1'
+      )
+      .fromTo('.signal-footprint', 
+        { opacity: 0 }, 
+        { opacity: 1, duration: MOTION_DURATION.medium }, 
+        '-=0.1'
+      );
+    });
+
+    mm.add('(prefers-reduced-motion: reduce)', () => {
+      // Instant display without movement or opacity tweens
+      gsap.set(['.signal-telemetry-bar', '.signal-headline', '.signal-body', '.signal-cta', '.signal-footprint'], {
+        opacity: 1,
+        y: 0
+      });
+      if (pathRef.current) {
+        gsap.set(pathRef.current, { strokeDashoffset: 0, strokeDasharray: 'none' });
+      }
+    });
+
+    return () => mm.revert();
+  }, []);
 
   return (
     <section 
+      ref={containerRef}
       aria-label="The Signal: Mission Introduction"
       style={{
-        minHeight: '85vh',
+        minHeight: '88vh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
@@ -34,6 +99,7 @@ export default function SignalScene({ onEnter }) {
     >
       {/* Top Telemetry Header */}
       <div 
+        className="signal-telemetry-bar"
         style={{
           display: 'flex',
           justifyContent: 'space-between',
@@ -45,7 +111,10 @@ export default function SignalScene({ onEnter }) {
         }}
       >
         <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--color-amber-bright)', display: 'inline-block' }} />
+          <span 
+            ref={pulseDotRef}
+            style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: 'var(--color-amber-bright)', display: 'inline-block' }} 
+          />
           <span className="font-telemetry" style={{ color: 'var(--color-telemetry-silver)' }}>
             CARRIER DETECTED · 2295.000 MHz (S-BAND)
           </span>
@@ -56,57 +125,43 @@ export default function SignalScene({ onEnter }) {
       </div>
 
       {/* Center Cinematic Decryption Scene */}
-      <div style={{ maxWidth: '860px', margin: 'auto 0', padding: 'var(--space-2xl) 0' }}>
+      <div style={{ maxWidth: '880px', margin: 'auto 0', padding: 'var(--space-2xl) 0' }}>
         
-        {/* Subtle SVG Frequency Baseline Tracer */}
-        <div style={{ width: '100%', maxWidth: '420px', height: '36px', marginBottom: 'var(--space-xl)', opacity: 0.75 }}>
-          <svg viewBox="0 0 420 36" fill="none" style={{ width: '100%', height: '100%' }} aria-hidden="true">
+        {/* Self-drawing SVG Frequency Waveform */}
+        <div style={{ width: '100%', maxWidth: '440px', height: '40px', marginBottom: 'var(--space-xl)' }}>
+          <svg viewBox="0 0 440 40" fill="none" style={{ width: '100%', height: '100%' }} aria-hidden="true">
             <path 
-              d="M0 18 H140 Q150 18 155 10 T165 26 T175 6 T185 30 T195 18 H420" 
+              ref={pathRef}
+              d="M0 20 H140 Q152 20 158 8 T170 32 T182 4 T194 36 T206 20 H440" 
               stroke="var(--color-lunar-amber)" 
-              strokeWidth="1.5" 
-              strokeDasharray="4 2" 
+              strokeWidth="1.75" 
             />
           </svg>
         </div>
 
         {/* Challenge Copy Beat 1 */}
         <h1 
-          className="text-display-1" 
-          style={{
-            marginBottom: 'var(--space-md)',
-            opacity: typedStage >= 1 ? 1 : 0,
-            transform: typedStage >= 1 ? 'translateY(0)' : 'translateY(8px)',
-            transition: 'opacity 600ms ease, transform 600ms ease'
-          }}
+          className="signal-headline text-display-1" 
+          style={{ marginBottom: 'var(--space-md)' }}
         >
           Some machines never made it home.
         </h1>
 
         {/* Challenge Copy Beat 2 */}
         <p 
-          className="text-lead" 
+          className="signal-body text-lead" 
           style={{
             color: 'var(--color-telemetry-silver)',
-            maxWidth: '680px',
+            maxWidth: '700px',
             lineHeight: 1.7,
-            marginBottom: 'var(--space-2xl)',
-            opacity: typedStage >= 2 ? 1 : 0,
-            transform: typedStage >= 2 ? 'translateY(0)' : 'translateY(8px)',
-            transition: 'opacity 600ms ease, transform 600ms ease'
+            marginBottom: 'var(--space-2xl)'
           }}
         >
           Left in the regolith of Hadley Rille. Silenced under a Martian global sky. Drifting past the edge of the Sun's realm. Yet across millions of miles, what they discovered changed how we understand the universe.
         </p>
 
         {/* Call to Action: ENTER THE MISSION */}
-        <div 
-          style={{
-            opacity: typedStage >= 2 ? 1 : 0,
-            transform: typedStage >= 2 ? 'translateY(0)' : 'translateY(8px)',
-            transition: 'opacity 600ms ease 200ms, transform 600ms ease 200ms'
-          }}
-        >
+        <div className="signal-cta">
           <button
             onClick={onEnter}
             autoFocus
@@ -123,10 +178,17 @@ export default function SignalScene({ onEnter }) {
               fontWeight: 700,
               fontSize: '1rem',
               letterSpacing: '0.04em',
+              cursor: 'pointer',
               transition: 'background-color var(--transition-fast), transform var(--transition-fast)'
             }}
-            onMouseEnter={(e) => e.currentTarget.style.backgroundColor = 'var(--color-amber-bright)'}
-            onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'var(--color-lunar-amber)'}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--color-amber-bright)';
+              e.currentTarget.style.transform = 'translateY(-1px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.backgroundColor = 'var(--color-lunar-amber)';
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
           >
             ENTER THE MISSION →
           </button>
@@ -136,6 +198,7 @@ export default function SignalScene({ onEnter }) {
 
       {/* Astronomical Traversal Footprint Indicator */}
       <div 
+        className="signal-footprint"
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
