@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ArrowLeft, ExternalLink, ShieldCheck } from 'lucide-react';
 import { MOTION_DURATION, MOTION_EASE, refreshScrollTrigger } from '../../styles/motion.js';
 import LunarRoverSim from '../interactions/LunarRoverSim.jsx';
 import MarsEvidenceLab from '../interactions/MarsEvidenceLab.jsx';
 import InterstellarPing from '../interactions/InterstellarPing.jsx';
 import { imageCredits } from '../../data/credits.js';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function MissionLayout({ mission, onBackToSelector, onOpenSources }) {
   const [activeSpecIndex, setActiveSpecIndex] = useState(0);
@@ -16,21 +19,28 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
   const imageMap = {
     'apollo-15-lrv': {
       heroKey: 'apollo15_rover_irwin',
-      secondaryKey: 'apollo15_rover_work'
+      secondaryKey: 'apollo15_rover_work',
+      approachKey: 'apollo15_hadley_rille',
+      approachCaption: 'Hadley Rille & Apennines Approach (Apollo 15 Crew telephoto)'
     },
     'opportunity-mer': {
       heroKey: 'opportunity_self_portrait',
-      secondaryKey: 'opportunity_perseverance_valley'
+      secondaryKey: 'opportunity_perseverance_valley',
+      approachKey: 'opportunity_dust_storm',
+      approachCaption: 'Simulated darkening of Martian sky during June 2018 dust storm (Pancam tau data)'
     },
     'voyager-1': {
       heroKey: 'voyager1_spacecraft',
-      secondaryKey: null
+      secondaryKey: 'voyager1_pale_blue_dot',
+      approachKey: 'the_signal_deepfield',
+      approachCaption: 'Hubble eXtreme Deep Field: The vast cosmic void beyond the Sun\'s realm'
     }
   };
 
   const currentMap = imageMap[mission.id] || imageMap['apollo-15-lrv'];
   const heroImage = imageCredits.find((c) => c.key === currentMap.heroKey);
   const secondaryImage = currentMap.secondaryKey ? imageCredits.find((c) => c.key === currentMap.secondaryKey) : null;
+  const approachImage = currentMap.approachKey ? imageCredits.find((c) => c.key === currentMap.approachKey) : null;
 
   useEffect(() => {
     const el = articleRef.current;
@@ -55,7 +65,27 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
         });
       }
 
-      // 2. Fact stamps and discovery cards fade-in on enter
+      // 2. Orbital Approach Photo slow drift and zoom scrub (Beat 1)
+      const approachImg = el.querySelector('.orbital-approach-img');
+      const approachWrapper = el.querySelector('.orbital-approach-wrapper');
+      if (approachImg && approachWrapper) {
+        gsap.fromTo(approachImg,
+          { scale: 1.0, y: -10 },
+          {
+            scale: 1.12,
+            y: 12,
+            ease: 'none',
+            scrollTrigger: {
+              trigger: approachWrapper,
+              start: 'top bottom',
+              end: 'bottom top',
+              scrub: 0.8
+            }
+          }
+        );
+      }
+
+      // 3. Fact stamps and discovery cards fade-in on enter
       const factCards = el.querySelectorAll('.scroll-reveal-card');
       if (factCards.length > 0) {
         gsap.fromTo(factCards,
@@ -75,7 +105,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
         );
       }
 
-      // 3. Progress Rail tracking across the 6 beats
+      // 4. Progress Rail tracking across the 6 beats
       const beatSections = [
         { id: 'beat-mystery', key: 'mystery' },
         { id: 'beat-machine', key: 'machine' },
@@ -102,6 +132,8 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
     mm.add('(prefers-reduced-motion: reduce)', () => {
       const heroImg = el.querySelector('.hero-photo-img');
       if (heroImg) gsap.set(heroImg, { scale: 1 });
+      const approachImg = el.querySelector('.orbital-approach-img');
+      if (approachImg) gsap.set(approachImg, { scale: 1, y: 0 });
       const factCards = el.querySelectorAll('.scroll-reveal-card');
       if (factCards.length > 0) gsap.set(factCards, { opacity: 1, y: 0 });
     });
@@ -126,18 +158,18 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
   };
 
   return (
-    <article ref={articleRef} aria-labelledby="mission-title" style={{ paddingBottom: 'var(--space-3xl)', position: 'relative' }}>
+    <article ref={articleRef} style={{ paddingBottom: 'var(--space-3xl)' }}>
       
-      {/* Sticky Progress Rail Tracker */}
+      {/* Sticky Mission Sub-Header & Breadcrumb */}
       <nav 
-        aria-label="Mission Beat Progress Rail"
+        aria-label="Mission Story Beats"
         style={{
           position: 'sticky',
-          top: '56px',
+          top: '52px',
           zIndex: 90,
-          backgroundColor: 'rgba(11, 13, 17, 0.94)',
+          backgroundColor: 'rgba(11, 13, 17, 0.95)',
           backdropFilter: 'blur(8px)',
-          borderBottom: '1px solid var(--color-surface-border-subtle)',
+          borderBottom: '1px solid var(--color-surface-border)',
           padding: '8px 0'
         }}
       >
@@ -151,10 +183,14 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
               color: 'var(--color-telemetry-silver)',
               fontSize: '0.8125rem',
               fontWeight: 600,
-              cursor: 'pointer'
+              cursor: 'pointer',
+              backgroundColor: 'transparent',
+              border: 'none',
+              padding: '4px 0'
             }}
           >
-            ← RETURN TO DESTINATIONS
+            <ArrowLeft size={14} aria-hidden="true" />
+            <span>RETURN TO DESTINATIONS</span>
           </button>
 
           <div style={{ display: 'flex', gap: '4px', alignItems: 'center', overflowX: 'auto', maxWidth: '100%', padding: '2px 0' }}>
@@ -227,7 +263,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
                 position: 'absolute',
                 bottom: '16px',
                 right: '16px',
-                backgroundColor: 'rgba(11, 13, 17, 0.85)',
+                backgroundColor: 'rgba(11, 13, 17, 0.88)',
                 backdropFilter: 'blur(6px)',
                 border: '1px solid var(--color-surface-border)',
                 borderRadius: 'var(--radius-sm)',
@@ -236,7 +272,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
                 color: 'var(--color-telemetry-silver)'
               }}
             >
-              {heroImage.type === 'illustration' ? 'Illustration' : 'Photo'}: {heroImage.creditLine} ({heroImage.nasaId})
+              {heroImage.type === 'illustration' ? "Artist's Concept" : 'Photograph'}: {heroImage.creditLine} ({heroImage.nasaId})
             </div>
           </div>
         )}
@@ -249,40 +285,98 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
             <span className="badge-tag">
               LIGHT DELAY: {mission.lightTime}
             </span>
-            <span className="badge-tag" style={{ color: 'var(--color-amber-bright)' }}>
-              ● {mission.statusBadge}
+            <span className={`badge-tag ${mission.statusType === 'ACTIVE' ? 'badge-tag--active' : 'badge-tag--amber'}`}>
+              {mission.statusBadge}
             </span>
           </div>
 
-          <h1 id="mission-title" className="text-display-1" style={{ marginBottom: 'var(--space-xs)', textShadow: '0 2px 10px rgba(0,0,0,0.8)' }}>
+          <h1 className="text-display-1" style={{ fontSize: 'clamp(2.2rem, 5vw, 4rem)', marginBottom: 'var(--space-xs)' }}>
             {mission.machineName}
           </h1>
 
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-md)', alignItems: 'center', color: 'var(--color-telemetry-silver)', fontSize: '0.9375rem' }}>
-            <span><strong>Designation:</strong> {mission.designation}</span>
-            <span>•</span>
-            <span><strong>Departure/Landed:</strong> {mission.landingDate}</span>
-            <span>•</span>
-            <span><strong>Location:</strong> {mission.locationName}</span>
+          <div style={{ fontSize: '1.25rem', color: mission.accentColor, fontWeight: 500, marginBottom: 'var(--space-xs)' }}>
+            {mission.thematicSnippet}
+          </div>
+
+          <div className="font-telemetry" style={{ color: 'var(--color-telemetry-silver)' }}>
+            {mission.locationName} · {mission.coordinates}
           </div>
         </div>
       </header>
 
+      {/* Main Narrative Article Body */}
       <div className="site-container" style={{ marginTop: 'var(--space-2xl)' }}>
 
         {/* ==================================================================
             BEAT 1: MYSTERY (The Hook / The Enigma)
             ================================================================== */}
-        <section id="beat-mystery" aria-labelledby="beat-mystery-heading" style={{ marginBottom: 'var(--space-3xl)', maxWidth: '820px' }}>
+        <section id="beat-mystery" aria-labelledby="beat-mystery-heading" style={{ marginBottom: 'var(--space-3xl)', maxWidth: '840px' }}>
           <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
             STAGE 01 · THE ENIGMA
           </div>
           <h2 id="beat-mystery-heading" className="text-display-2" style={{ marginBottom: 'var(--space-md)' }}>
             {mission.mystery.headline}
           </h2>
-          <p className="text-lead" style={{ lineHeight: 1.7 }}>
+          <p className="text-lead" style={{ lineHeight: 1.7, marginBottom: 'var(--space-lg)' }}>
             {mission.mystery.narrative}
           </p>
+
+          {/* Authentic NASA Approach Visual with ScrollTrigger Scrub */}
+          {approachImage && (
+            <div 
+              className="orbital-approach-wrapper"
+              style={{
+                borderRadius: 'var(--radius-md)',
+                overflow: 'hidden',
+                border: '1px solid var(--color-surface-border)',
+                backgroundColor: '#0E1117',
+                marginBottom: 'var(--space-md)'
+              }}
+            >
+              <div style={{ height: '320px', width: '100%', position: 'relative', overflow: 'hidden' }}>
+                <img
+                  src={approachImage.heroFile}
+                  alt={approachImage.altText}
+                  className="orbital-approach-img"
+                  loading="lazy"
+                  width="1920"
+                  height="1080"
+                  onLoad={refreshScrollTrigger}
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    display: 'block'
+                  }}
+                />
+                <div 
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    background: 'linear-gradient(to top, rgba(11,13,17,0.7) 0%, transparent 60%)'
+                  }} 
+                />
+              </div>
+
+              <div 
+                style={{
+                  padding: '8px 14px',
+                  backgroundColor: 'rgba(11, 13, 17, 0.95)',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  fontSize: '0.6875rem',
+                  color: 'var(--color-telemetry-silver)',
+                  borderTop: '1px solid var(--color-surface-border-subtle)'
+                }}
+              >
+                <span>{currentMap.approachCaption}</span>
+                <span className="font-telemetry" style={{ color: 'var(--color-amber-bright)' }}>
+                  NASA ID: {approachImage.nasaId}
+                </span>
+              </div>
+            </div>
+          )}
         </section>
 
         {/* ==================================================================
@@ -300,7 +394,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
           }}
         >
           <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
-            STAGE 02 · HARDWARE ARCHITECTURE
+            STAGE 02 · HARDWARE ARCHITECTURE (HOW THE MACHINE WORKED)
           </div>
           <h2 id="beat-machine-heading" className="text-headline-3" style={{ fontSize: 'clamp(1.5rem, 2.5vw, 2.25rem)', marginBottom: 'var(--space-xs)' }}>
             {mission.machine.headline}
@@ -384,7 +478,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
                   color: 'var(--color-muted-slate)'
                 }}
               >
-                Audited against primary NASA technical reports and mission manuals.
+                Audited against primary NASA technical reports and engineering specifications.
               </div>
             </div>
 
@@ -420,7 +514,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
                     style={{ width: '100%', height: 'auto', display: 'block' }}
                   />
                   <div style={{ padding: '6px 10px', fontSize: '0.6875rem', color: 'var(--color-muted-slate)', backgroundColor: 'rgba(11, 13, 17, 0.9)' }}>
-                    Photo: {secondaryImage.creditLine} ({secondaryImage.nasaId})
+                    {secondaryImage.type === 'illustration' ? "Artist's Concept" : 'Photograph'}: {secondaryImage.creditLine} ({secondaryImage.nasaId})
                   </div>
                 </div>
               )}
@@ -431,34 +525,45 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
               style={{
                 backgroundColor: 'var(--color-surface-charcoal)',
                 border: '1px solid var(--color-surface-border)',
-                borderRadius: 'var(--radius-md)',
-                padding: 'var(--space-lg)'
+                borderRadius: 'var(--radius-lg)',
+                padding: 'var(--space-xl)'
               }}
             >
               <div className="font-telemetry" style={{ color: 'var(--color-telemetry-silver)', marginBottom: 'var(--space-md)' }}>
-                MISSION LOG · VERIFIED DATA
+                MISSION DOCKET SUMMARY
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 'var(--space-md)' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-md)' }}>
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>DURATION</div>
-                  <div className="font-telemetry" style={{ fontSize: '1.25rem', color: 'var(--color-regolith-white)', fontWeight: 600 }}>
-                    {mission.surfaceDuration}
-                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-muted-slate)' }}>LANDING / LAUNCH DATE</div>
+                  <div style={{ fontWeight: 600, color: 'var(--color-regolith-white)' }}>{mission.landingDate}</div>
                 </div>
 
                 <div>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>COMMUNICATION DELAY</div>
-                  <div className="font-telemetry" style={{ fontSize: '1.25rem', color: 'var(--color-amber-bright)', fontWeight: 600 }}>
-                    {mission.lightTime}
-                  </div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-muted-slate)' }}>OPERATIONAL DURATION</div>
+                  <div style={{ fontWeight: 600, color: 'var(--color-regolith-white)' }}>{mission.surfaceDuration}</div>
                 </div>
 
-                <div style={{ gridColumn: 'span 2', borderTop: '1px solid var(--color-surface-border)', paddingTop: '8px' }}>
-                  <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>PRIMARY SCIENTIFIC MANDATE</div>
-                  <div style={{ fontSize: '0.875rem', color: 'var(--color-regolith-white)', marginTop: '2px' }}>
-                    {mission.thematicSnippet}
+                {mission.sampleMass && (
+                  <div>
+                    <div style={{ fontSize: '0.75rem', color: 'var(--color-muted-slate)' }}>SAMPLE MASS RETURNED</div>
+                    <div style={{ fontWeight: 600, color: 'var(--color-amber-bright)' }}>{mission.sampleMass}</div>
                   </div>
+                )}
+
+                <div>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--color-muted-slate)' }}>PRIMARY RESTING LOCATION</div>
+                  <div style={{ fontWeight: 600, color: 'var(--color-regolith-white)' }}>{mission.locationName}</div>
+                </div>
+
+                <div style={{ borderTop: '1px solid var(--color-surface-border)', paddingTop: 'var(--space-sm)' }}>
+                  <button
+                    onClick={onOpenSources}
+                    className="badge-tag"
+                    style={{ width: '100%', justifyContent: 'center', cursor: 'pointer', padding: '8px' }}
+                  >
+                    Inspect NASA Primary Sources ↗
+                  </button>
                 </div>
               </div>
             </div>
@@ -467,35 +572,43 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
         </section>
 
         {/* ==================================================================
-            BEAT 4: EXPERIENCE THE MISSION (Interactive Simulator)
+            BEAT 4: EXPERIENCE THE MISSION (Interactive Model)
             ================================================================== */}
-        <section id="beat-interaction" aria-labelledby="beat-interaction-heading" style={{ marginBottom: 'var(--space-3xl)' }}>
-          <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
-            STAGE 04 · INTERACTIVE FLIGHT MODEL
+        <section id="beat-interaction" aria-labelledby="beat-sim-heading" style={{ marginBottom: 'var(--space-3xl)' }}>
+          <div style={{ maxWidth: '820px', marginBottom: 'var(--space-md)' }}>
+            <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
+              STAGE 04 · INTERACTIVE MISSION LAB
+            </div>
+            <h2 id="beat-sim-heading" className="text-display-2" style={{ marginBottom: 'var(--space-xs)' }}>
+              {mission.interaction.title}
+            </h2>
+            <p className="text-lead">
+              Concept: <strong style={{ color: 'var(--color-regolith-white)' }}>{mission.interaction.conceptTaught}</strong>. Hands-on exploration model calibrated to authentic NASA parameters.
+            </p>
           </div>
-          <h2 id="beat-interaction-heading" className="text-display-2" style={{ marginBottom: 'var(--space-xs)' }}>
-            {mission.interaction.title}
-          </h2>
-          <p className="text-body" style={{ maxWidth: '780px', marginBottom: 'var(--space-sm)' }}>
-            Real scientific concept: <strong>{mission.interaction.conceptTaught}</strong>. Learn how engineering constraints dictated what astronauts and robotic rovers could achieve.
-          </p>
 
-          {/* Mount dynamic interaction */}
+          {/* Render the specific interactive component */}
           {renderInteraction()}
         </section>
 
         {/* ==================================================================
-            BEAT 5: DISCOVER THE SCIENCE (Verified Discoveries & Takeaway)
+            BEAT 5: DISCOVER THE SCIENCE (What the Machine Revealed)
             ================================================================== */}
         <section id="beat-science" aria-labelledby="beat-science-heading" style={{ marginBottom: 'var(--space-3xl)' }}>
-          <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
-            STAGE 05 · SCIENTIFIC REVELATION
+          <div style={{ maxWidth: '820px', marginBottom: 'var(--space-xl)' }}>
+            <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
+              STAGE 05 · WHAT THE MACHINE REVEALED
+            </div>
+            <h2 id="beat-science-heading" className="text-display-2" style={{ marginBottom: 'var(--space-xs)' }}>
+              {mission.science.headline}
+            </h2>
+            <p className="text-lead" style={{ color: 'var(--color-telemetry-silver)' }}>
+              Before these machines traveled across alien terrain, human science could only guess at the composition and geological history of these worlds.
+            </p>
           </div>
-          <h2 id="beat-science-heading" className="text-display-2" style={{ marginBottom: 'var(--space-md)' }}>
-            {mission.science.headline}
-          </h2>
 
-          <div className="science-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--space-md)', marginBottom: 'var(--space-xl)' }}>
+          {/* Scientific Discoveries Grid */}
+          <div className="science-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-md)', marginBottom: 'var(--space-2xl)' }}>
             {mission.science.discoveries.map((item, index) => (
               <div 
                 key={item.title}
@@ -568,6 +681,37 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
             {mission.legacy.statusStatement}
           </p>
 
+          {/* Source-Linked "Also Left Behind" Fact Stamp */}
+          {mission.legacy.alsoLeftBehind && (
+            <div 
+              style={{
+                backgroundColor: 'rgba(232, 144, 32, 0.08)',
+                border: '1px solid rgba(232, 144, 32, 0.35)',
+                borderRadius: 'var(--radius-md)',
+                padding: 'var(--space-md)',
+                marginBottom: 'var(--space-lg)',
+                display: 'flex',
+                alignItems: 'flex-start',
+                gap: 'var(--space-sm)'
+              }}
+            >
+              <ShieldCheck size={22} style={{ color: 'var(--color-amber-bright)', flexShrink: 0, marginTop: '2px' }} aria-hidden="true" />
+              <div>
+                <div style={{ fontWeight: 700, fontSize: '0.8125rem', color: 'var(--color-amber-bright)', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: '4px' }}>
+                  Also Left Behind at Hadley Base (NSSDCA 1971-063C)
+                </div>
+                <div style={{ fontSize: '0.875rem', color: 'var(--color-telemetry-silver)', lineHeight: 1.6 }}>
+                  {mission.legacy.alsoLeftBehind}
+                </div>
+                {mission.legacy.sampleYield && (
+                  <div style={{ fontSize: '0.8125rem', color: 'var(--color-regolith-white)', marginTop: '6px' }}>
+                    <strong>Scientific Yield:</strong> {mission.legacy.sampleYield}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--space-md)', alignItems: 'center', justifyContent: 'space-between', borderTop: '1px solid var(--color-surface-border)', paddingTop: 'var(--space-md)' }}>
             <div>
               <div style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>OFFICIAL COORDINATES</div>
@@ -586,14 +730,16 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
             <button
               onClick={onOpenSources}
               className="badge-tag badge-tag--amber"
-              style={{ cursor: 'pointer', padding: '8px 14px' }}
+              style={{ cursor: 'pointer', padding: '8px 14px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}
             >
-              Examine Primary NASA Documents ({mission.legacy.primarySourceCount}) ↗
+              <span>Examine Primary NASA Documents ({mission.legacy.primarySourceCount})</span>
+              <ExternalLink size={14} aria-hidden="true" />
             </button>
           </div>
         </section>
 
       </div>
+
     </article>
   );
 }

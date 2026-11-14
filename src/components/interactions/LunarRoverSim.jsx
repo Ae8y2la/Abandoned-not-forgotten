@@ -265,10 +265,10 @@ export default function LunarRoverSim() {
       {/* Simulation Header & Mandatory Educational Badge */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-xs)', marginBottom: 'var(--space-md)' }}>
         <span className="badge-tag badge-tag--model">
-          SIMPLIFIED TEACHING MODEL: DEAD-RECKONING & TRAVERSE CONSTRAINT
+          Simplified model · Dead-Reckoning Navigation & 5.0 km Walk-Back Limit
         </span>
         <span className="badge-tag" style={{ color: 'var(--color-telemetry-silver)' }}>
-          TN D-7469 NAV ALGORITHM
+          NASA TN D-7469 ALGORITHM
         </span>
       </div>
 
