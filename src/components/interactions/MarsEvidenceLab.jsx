@@ -14,9 +14,10 @@ export default function MarsEvidenceLab() {
       discoveredDate: 'March 2004 (Sol 34)',
       instrument: 'Microscopic Imager & Mössbauer Spectrometer',
       image: '/assets/nasa/opportunity_blueberries_800.webp',
-      alt: 'Microscopic Imager view of spherical hematite blueberries in martian soil',
+      alt: 'Microscopic Imager close-up of spherical hematite blueberries in martian soil',
+      nasaId: 'PIA05273',
       correctEnvId: 'standing_water',
-      hint: 'Millimeter-sized iron-rich spheres that precipitated out of standing groundwater soaked in porous rock.'
+      hint: 'Millimeter-sized iron-rich spherules that precipitated out of standing groundwater soaked in porous sedimentary rock.'
     },
     {
       id: 'jarosite',
@@ -24,8 +25,9 @@ export default function MarsEvidenceLab() {
       location: 'Eagle Crater Outcrop · Meridiani',
       discoveredDate: 'Sol 40',
       instrument: 'APXS & Mössbauer Spectrometer',
+      nasaId: 'JPL MER-B APXS',
       correctEnvId: 'acidic_water',
-      hint: 'A hydrated iron-potassium sulfate mineral that forms only when liquid water is intensely acidic.'
+      hint: 'A hydrated iron-potassium sulfate mineral that forms only when liquid water is intensely acidic (low pH), resembling acid mine drainage.'
     },
     {
       id: 'gypsum',
@@ -33,8 +35,11 @@ export default function MarsEvidenceLab() {
       location: 'Endeavour Crater Rim · Cape York',
       discoveredDate: 'December 2011 (Sol 2777)',
       instrument: 'Microscopic Imager & APXS',
+      image: '/assets/nasa/opportunity_homestake_vein_800.webp',
+      alt: 'Pancam false-color view of Homestake calcium sulfate vein protruding from bedrock',
+      nasaId: 'PIA15033',
       correctEnvId: 'fracture_water',
-      hint: 'A thumb-wide line of pure calcium sulfate deposited by water flowing through rock fractures.'
+      hint: 'A thumb-wide vein of pure calcium sulfate (gypsum) deposited by subterranean water circulating through bedrock fractures.'
     },
     {
       id: 'clay',
@@ -42,8 +47,9 @@ export default function MarsEvidenceLab() {
       location: 'Matijevic Hill · Endeavour Crater',
       discoveredDate: 'June 2013 (Sol 3300+)',
       instrument: 'APXS & CRISM Orbital Guidance',
+      nasaId: 'PIA16703',
       correctEnvId: 'neutral_water',
-      hint: 'Layered sheet-silicate clays formed under mild, neutral-pH water conditions before Mars turned acidic.'
+      hint: 'Layered sheet-silicate clays formed under mild, neutral-pH water conditions. CRITICAL NOTE: Indicates benign water conditions, strictly NOT proof of biological life!'
     }
   ];
 
@@ -68,8 +74,8 @@ export default function MarsEvidenceLab() {
     },
     {
       id: 'neutral_water',
-      title: 'Mild, Neutral-pH Water (Potable)',
-      description: 'Ancient, non-acidic water chemistry favorable for chemistry (indicator of water, NOT proof of life).',
+      title: 'Mild, Neutral-pH Water (Benign)',
+      description: 'Ancient, non-acidic water chemistry. (Confirmed water environment, strictly NOT proof of life).',
       matchedClueId: 'clay'
     }
   ];
@@ -80,6 +86,7 @@ export default function MarsEvidenceLab() {
 
   const matchedCount = Object.keys(matchedPairs).length;
   const isComplete = matchedCount === clues.length;
+  const activeClue = clues.find((c) => c.id === selectedClueId);
 
   // Handle matching interaction
   const handleMatch = (envId) => {
@@ -87,11 +94,9 @@ export default function MarsEvidenceLab() {
     const clue = clues.find((c) => c.id === selectedClueId);
 
     if (clue.correctEnvId === envId) {
-      setMatchedPairs((prev) => {
-        const next = { ...prev, [selectedClueId]: envId };
-        return next;
-      });
-      setFeedbackMsg(`✓ Correct Match: ${clue.name} confirms ${environments.find((e) => e.id === envId).title}!`);
+      setMatchedPairs((prev) => ({ ...prev, [selectedClueId]: envId }));
+      const envTitle = environments.find((e) => e.id === envId)?.title;
+      setFeedbackMsg(`✓ Correct Match: ${clue.name} confirms ${envTitle}!`);
       
       // Auto-select next unmatched clue
       const nextUnmatched = clues.find((c) => c.id !== selectedClueId && !matchedPairs[c.id]);
@@ -143,7 +148,7 @@ export default function MarsEvidenceLab() {
       {/* Header & Mandatory Simplified Model Badge */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '8px', marginBottom: 'var(--space-md)' }}>
         <span className="badge-tag badge-tag--model">
-          SIMPLIFIED TEACHING MODEL: PALEO-HYDROLOGICAL MINERAL ANALYSIS
+          Simplified model · Paleo-Hydrological Mineral Analysis
         </span>
         <span className="badge-tag" style={{ color: 'var(--color-mars-rust)', borderColor: 'rgba(200, 86, 50, 0.4)' }}>
           MER-B ATHENA PAYLOAD
@@ -178,29 +183,53 @@ export default function MarsEvidenceLab() {
           </span>
         </div>
 
-        <div style={{ width: '100%', height: '8px', backgroundColor: 'rgba(255,255,255,0.08)', borderRadius: '4px', overflow: 'hidden' }}>
-          <div 
+        {/* Outer Bar */}
+        <div 
+          style={{
+            width: '100%',
+            height: '10px',
+            backgroundColor: 'rgba(255, 255, 255, 0.08)',
+            borderRadius: '5px',
+            overflow: 'hidden'
+          }}
+        >
+          {/* Inner Meter Fill (GSAP Animated) */}
+          <div
             ref={meterRef}
             style={{
               width: '0%',
               height: '100%',
-              backgroundColor: 'var(--color-mars-rust)',
-              borderRadius: '4px'
+              backgroundColor: isComplete ? 'var(--color-status-active)' : 'var(--color-mars-rust)',
+              transition: 'background-color 300ms ease'
             }}
           />
         </div>
       </div>
 
-      {/* Main Interactive Stage: Clues vs Environment Receptors */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--space-md)', alignItems: 'start' }}>
+      {/* Dynamic Screen Reader Feedback Live Region */}
+      <div 
+        aria-live="polite" 
+        className="font-telemetry" 
+        style={{
+          minHeight: '24px',
+          fontSize: '0.8125rem',
+          color: feedbackMsg && feedbackMsg.startsWith('✓') ? 'var(--color-status-active)' : 'var(--color-amber-bright)',
+          marginBottom: 'var(--space-sm)'
+        }}
+      >
+        {feedbackMsg}
+      </div>
+
+      {/* Interactive Two-Column Lab Workspace */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(290px, 1fr))', gap: 'var(--space-md)', alignItems: 'start' }}>
         
-        {/* Left Column: Mineral Clue Cards */}
+        {/* Left Column: Mineral Clues Discovered by Opportunity */}
         <div>
           <div className="font-telemetry" style={{ color: 'var(--color-telemetry-silver)', marginBottom: '8px' }}>
-            STEP 1: SELECT A MINERAL SPECIMEN
+            STEP 1: SELECT A DISCOVERED MINERAL CLUE
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }} role="tablist" aria-label="Mineral evidence clues">
             {clues.map((clue) => {
               const isSelected = selectedClueId === clue.id;
               const isMatched = !!matchedPairs[clue.id];
@@ -208,13 +237,14 @@ export default function MarsEvidenceLab() {
               return (
                 <button
                   key={clue.id}
+                  role="tab"
+                  aria-selected={isSelected}
                   onClick={() => setSelectedClueId(clue.id)}
-                  aria-pressed={isSelected}
                   style={{
                     textAlign: 'left',
-                    padding: '12px 16px',
+                    padding: '12px 14px',
                     backgroundColor: isSelected ? 'var(--color-surface-elevated)' : 'transparent',
-                    border: `1px solid ${isSelected ? 'var(--color-mars-rust)' : isMatched ? 'var(--color-status-active)' : 'var(--color-surface-border)'}`,
+                    border: `1px solid ${isSelected ? 'var(--color-mars-rust)' : isMatched ? 'rgba(16, 185, 129, 0.4)' : 'var(--color-surface-border)'}`,
                     borderRadius: 'var(--radius-sm)',
                     cursor: 'pointer',
                     transition: 'all var(--transition-fast)'
@@ -225,7 +255,7 @@ export default function MarsEvidenceLab() {
                       {clue.name}
                     </div>
                     {isMatched ? (
-                      <span style={{ color: 'var(--color-status-active)', fontSize: '0.8125rem' }}>✓ Matched</span>
+                      <span style={{ color: 'var(--color-status-active)', fontSize: '0.8125rem', fontWeight: 600 }}>✓ Matched</span>
                     ) : (
                       <span style={{ color: 'var(--color-muted-slate)', fontSize: '0.75rem' }}>Unanalyzed</span>
                     )}
@@ -238,22 +268,38 @@ export default function MarsEvidenceLab() {
             })}
           </div>
 
-          {/* Active Clue Inspector Box */}
-          {selectedClueId && (
+          {/* Active Clue Inspector Box with Authentic NASA Close-Up Image */}
+          {activeClue && (
             <div 
               style={{
                 marginTop: 'var(--space-md)',
-                backgroundColor: 'rgba(11, 13, 17, 0.65)',
+                backgroundColor: 'rgba(11, 13, 17, 0.75)',
                 border: '1px solid var(--color-surface-border)',
                 borderRadius: 'var(--radius-sm)',
                 padding: '12px 16px'
               }}
             >
-              <div className="font-telemetry" style={{ color: 'var(--color-amber-bright)', marginBottom: '4px' }}>
-                MICROSCOPIC EVIDENCE NOTE
+              {activeClue.image && (
+                <div style={{ height: '140px', width: '100%', borderRadius: 'var(--radius-sm)', overflow: 'hidden', marginBottom: '8px', border: '1px solid var(--color-surface-border)' }}>
+                  <img 
+                    src={activeClue.image} 
+                    alt={activeClue.alt}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} 
+                  />
+                </div>
+              )}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '4px' }}>
+                <span className="font-telemetry" style={{ color: 'var(--color-amber-bright)' }}>
+                  GEOLOGICAL SPECIMEN INSPECTOR
+                </span>
+                {activeClue.nasaId && (
+                  <span className="font-telemetry" style={{ fontSize: '0.6875rem', color: 'var(--color-telemetry-silver)' }}>
+                    NASA ID: {activeClue.nasaId}
+                  </span>
+                )}
               </div>
               <p className="text-body" style={{ fontSize: '0.875rem', lineHeight: 1.6, margin: 0 }}>
-                {clues.find((c) => c.id === selectedClueId)?.hint}
+                {activeClue.hint}
               </p>
             </div>
           )}
@@ -302,7 +348,7 @@ export default function MarsEvidenceLab() {
 
                   {matchedClue && (
                     <div style={{ marginTop: '6px', fontSize: '0.75rem', color: 'var(--color-status-active)', fontWeight: 500 }}>
-                      ✦ Proven by: {matchedClue.name}
+                      Evidence: {matchedClue.name} ({matchedClue.location})
                     </div>
                   )}
                 </div>
@@ -313,64 +359,40 @@ export default function MarsEvidenceLab() {
 
       </div>
 
-      {/* Mandatory Scientific Guardrail Alert (Clay is NOT evidence of life!) */}
-      <div 
-        style={{
-          marginTop: 'var(--space-md)',
-          backgroundColor: 'rgba(232, 144, 32, 0.08)',
-          border: '1px solid rgba(232, 144, 32, 0.3)',
-          borderRadius: 'var(--radius-sm)',
-          padding: '10px 14px',
-          fontSize: '0.8125rem',
-          lineHeight: 1.5,
-          color: 'var(--color-telemetry-silver)'
-        }}
-      >
-        <strong style={{ color: 'var(--color-amber-bright)' }}>Scientific Caveat for Students:</strong> Clay minerals (phyllosilicates) found by Opportunity prove that ancient water was neutral-pH, mild, and non-acidic. However, clay is a geochemical indicator of water chemistry—it is <strong>NOT</strong> direct evidence of past biological life.
-      </div>
-
-      {/* Final Verdict Banner (reveals when all 4 matched) */}
+      {/* Completion Banner (Verdict) */}
       {isComplete && (
         <div 
           className="verdict-banner"
           style={{
             marginTop: 'var(--space-md)',
-            backgroundColor: 'rgba(200, 86, 50, 0.12)',
-            border: '2px solid var(--color-mars-rust)',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            border: '1px solid var(--color-status-active)',
             borderRadius: 'var(--radius-md)',
             padding: 'var(--space-md)',
-            textAlign: 'center'
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            flexWrap: 'wrap',
+            gap: 'var(--space-sm)'
           }}
         >
-          <div className="font-telemetry" style={{ color: 'var(--color-amber-bright)', marginBottom: '4px' }}>
-            MARTIAN HYDROLOGY RECONSTRUCTED
+          <div>
+            <div style={{ fontWeight: 700, color: 'var(--color-status-active)', fontSize: '1rem', marginBottom: '2px' }}>
+              ✓ SCIENTIFIC VERDICT COMPLETE: Mars Underwent Multi-Epoch Water Evolution
+            </div>
+            <p style={{ fontSize: '0.8125rem', color: 'var(--color-regolith-white)', margin: 0, maxWidth: '720px', lineHeight: 1.5 }}>
+              By analyzing these four minerals, Opportunity demonstrated that Mars was not merely wet once, but experienced distinct hydrological epochs—transitioning from ancient neutral, drinkable water (clays) to an acidic sulfurous era (jarosite) before drying into the desert we see today. (Note: Proves water history, strictly not proof of life).
+            </p>
           </div>
-          <h4 style={{ fontSize: '1.25rem', color: 'var(--color-regolith-white)', marginBottom: '6px' }}>
-            The Two Epochs of Martian Water
-          </h4>
-          <p className="text-body" style={{ fontSize: '0.9375rem', maxWidth: '720px', margin: '0 auto var(--space-sm)' }}>
-            Opportunity proved that Mars was not wet in just one way. The oldest rocks at Endeavour Crater harbored neutral, drinkable water that formed smectite clays. Later, in Meridiani Planum, the water turned brutally acidic, precipitating jarosite and hematite spherules before the planet desiccated.
-          </p>
-          <div className="badge-tag badge-tag--amber">
-            TAKEAWAY: A robotic explorer can help scientists reconstruct the history of another world.
-          </div>
+          <button
+            onClick={handleReset}
+            className="badge-tag"
+            style={{ cursor: 'pointer', padding: '8px 12px', background: 'transparent' }}
+          >
+            Re-run Analysis
+          </button>
         </div>
       )}
-
-      {/* Bottom Controls & Reset */}
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: 'var(--space-md)', borderTop: '1px solid var(--color-surface-border)', paddingTop: 'var(--space-sm)' }}>
-        <div aria-live="polite" style={{ fontSize: '0.8125rem', color: 'var(--color-amber-bright)' }}>
-          {feedbackMsg}
-        </div>
-        <button
-          onClick={handleReset}
-          className="badge-tag"
-          style={{ cursor: 'pointer' }}
-        >
-          ⟲ Reset Analysis
-        </button>
-      </div>
-
     </section>
   );
 }
