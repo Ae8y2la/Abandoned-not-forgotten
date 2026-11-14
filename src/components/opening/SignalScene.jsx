@@ -4,6 +4,71 @@ import { DrawSVGPlugin, SplitText } from 'gsap/all';
 import { ArrowDown, Radio } from 'lucide-react';
 import { MOTION_DURATION, MOTION_EASE } from '../../styles/motion.js';
 
+// ─── Real Photo Moon with GSAP float animation ───────────────────────────────
+function RotatingMoon() {
+  const wrapperRef = useRef(null);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+
+    // Gentle slow rotation (slight tilt to show depth)
+    gsap.to(el, {
+      rotate: 360,
+      duration: 60,
+      repeat: -1,
+      ease: 'none',
+    });
+
+    // Gentle vertical float
+    gsap.to(el, {
+      y: -22,
+      duration: 7,
+      repeat: -1,
+      yoyo: true,
+      ease: 'sine.inOut',
+    });
+  }, []);
+
+  return (
+    <div
+      aria-hidden="true"
+      style={{
+        position: 'absolute',
+        right: 'clamp(-80px, -2vw, 30px)',
+        top: '50%',
+        transform: 'translateY(-52%)',
+        width: 'clamp(280px, 36vw, 520px)',
+        height: 'clamp(280px, 36vw, 520px)',
+        pointerEvents: 'none',
+        zIndex: 1,
+      }}
+    >
+      {/* The real moon photo */}
+      <div
+        ref={wrapperRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          position: 'relative',
+        }}
+      >
+        <img
+          src="/assets/moon-hero-isolated.png"
+          alt="Crescent Moon"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center',
+            display: 'block',
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+
 gsap.registerPlugin(DrawSVGPlugin, SplitText);
 
 export default function SignalScene({ onEnter }) {
@@ -44,14 +109,7 @@ export default function SignalScene({ onEnter }) {
       // 3. Main cinematic reveal timeline
       const tl = gsap.timeline({ defaults: { ease: MOTION_EASE.editorial } });
 
-      // Ambient background fade-in
-      if (bgImageRef.current) {
-        tl.fromTo(bgImageRef.current,
-          { opacity: 0, scale: 1.04 },
-          { opacity: 0.22, scale: 1.0, duration: 2.2, ease: 'power2.out' },
-          0
-        );
-      }
+      // Background image removed — no ambient fade-in needed
 
       // Telemetry bar reveal
       tl.fromTo('.signal-telemetry-bar',
@@ -108,7 +166,7 @@ export default function SignalScene({ onEnter }) {
 
     mm.add('(prefers-reduced-motion: reduce)', () => {
       // Instant static layout for accessibility
-      if (bgImageRef.current) gsap.set(bgImageRef.current, { opacity: 0.22, scale: 1 });
+      // Background image removed
       gsap.set(['.signal-telemetry-bar', '.signal-headline', '.signal-body', '.signal-cta', '.signal-footprint'], {
         opacity: 1,
         y: 0
@@ -140,41 +198,7 @@ export default function SignalScene({ onEnter }) {
         overflow: 'hidden'
       }}
     >
-      {/* Authentic NASA Background: Hubble eXtreme Deep Field (GSFC_20171208_Archive_e001651) */}
-      <div
-        ref={bgImageRef}
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          zIndex: 0,
-          pointerEvents: 'none',
-          opacity: 0
-        }}
-      >
-        <picture>
-          <source srcSet="/assets/nasa/the_signal_deepfield_1920.webp" media="(min-width: 801px)" type="image/webp" />
-          <img
-            src="/assets/nasa/the_signal_deepfield_800.webp"
-            alt=""
-            style={{
-              width: '100%',
-              height: '100%',
-              objectFit: 'cover',
-              objectPosition: 'center',
-              filter: 'brightness(0.55) contrast(1.15)'
-            }}
-          />
-        </picture>
-        {/* Cinematic Vignette Overlay */}
-        <div 
-          style={{
-            position: 'absolute',
-            inset: 0,
-            background: 'radial-gradient(ellipse at 50% 40%, rgba(11,13,17,0.2) 0%, rgba(11,13,17,0.85) 75%, #0B0D11 100%)'
-          }} 
-        />
-      </div>
+      {/* Background: clean — dusty deep-field image removed; 3D starfield shows through */}
 
       {/* Top Telemetry Header */}
       <div 
@@ -205,6 +229,9 @@ export default function SignalScene({ onEnter }) {
           DEEP SPACE NETWORK · GOLDSTONE / MADRID / CANBERRA
         </div>
       </div>
+
+      {/* Rotating Moon — right-side decorative element */}
+      <RotatingMoon />
 
       {/* Center Cinematic Decryption Scene */}
       <div style={{ position: 'relative', zIndex: 1, maxWidth: '880px', margin: 'auto 0', padding: 'var(--space-xl) 0' }}>

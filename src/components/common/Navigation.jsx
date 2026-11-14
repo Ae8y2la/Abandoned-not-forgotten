@@ -1,87 +1,111 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import PlanetIcon from './PlanetIcon.jsx';
+import './Navigation.css';
+
+const NAV_ITEMS = [
+  { id: 'moon', label: 'Moon', planet: 'moon', missionId: 'apollo-15-lrv' },
+  { id: 'mars', label: 'Mars', planet: 'mars', missionId: 'opportunity-mer' },
+  { id: 'voyager', label: 'Voyager', planet: 'voyager', missionId: 'voyager-1' },
+];
 
 export default function Navigation({ activeMissionId, onSelectMission, onOpenSources, onReplayIntro }) {
+  const [pressedId, setPressedId] = useState(null);
+  const [hoveredId, setHoveredId] = useState(null);
+  const [reducedMotion, setReducedMotion] = useState(false);
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const updateMotion = () => setReducedMotion(motionQuery.matches);
+    const updateVisibility = () => setHidden(document.hidden);
+    updateMotion();
+    updateVisibility();
+    motionQuery.addEventListener?.('change', updateMotion);
+    document.addEventListener('visibilitychange', updateVisibility);
+    return () => {
+      motionQuery.removeEventListener?.('change', updateMotion);
+      document.removeEventListener('visibilitychange', updateVisibility);
+    };
+  }, []);
+
+  const activeId = useMemo(() => {
+    const activeItem = NAV_ITEMS.find((item) => item.missionId === activeMissionId);
+    return activeItem?.id || null;
+  }, [activeMissionId]);
+
+  const navigate = (item) => {
+    if (item.missionId) {
+      onSelectMission?.(item.missionId);
+      return;
+    }
+    onSelectMission?.('home');
+    window.setTimeout(() => {
+      document.getElementById('choose-your-world')?.scrollIntoView({
+        behavior: reducedMotion ? 'auto' : 'smooth',
+        block: 'start',
+      });
+    }, 120);
+  };
+
+  const handleItemClick = (item) => {
+    setPressedId(item.id);
+    window.setTimeout(() => {
+      setPressedId(null);
+      navigate(item);
+    }, reducedMotion ? 0 : 280);
+  };
+
   return (
-    <nav 
-      aria-label="Main Navigation"
-      style={{
-        position: 'sticky',
-        top: 0,
-        zIndex: 100,
-        backgroundColor: 'rgba(11, 13, 17, 0.94)',
-        backdropFilter: 'blur(8px)',
-        borderBottom: '1px solid var(--color-surface-border-subtle)',
-        padding: '12px 0'
-      }}
-    >
-      <div className="site-container" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
-        
-        {/* Project Brand & Callout */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <button 
-            onClick={() => onSelectMission && onSelectMission('home')}
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', textAlign: 'left', cursor: 'pointer' }}
-            aria-label="The Unfinished Mission Home"
-          >
-            <span style={{ width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'var(--color-lunar-amber)', display: 'inline-block' }} />
-            <span style={{ fontFamily: 'var(--font-sans)', fontWeight: 700, fontSize: '0.9375rem', letterSpacing: '0.06em', color: 'var(--color-regolith-white)' }}>
-              THE UNFINISHED MISSION
-            </span>
-          </button>
-        </div>
+    <nav className="planet-hop-nav" aria-label="Planet Hop navigation">
+      <button
+        type="button"
+        className="planet-hop-brand"
+        onClick={() => onSelectMission?.('home')}
+        aria-label="The Unfinished Mission home"
+      >
+        <span className="planet-hop-brand-dot" />
+        <span>THE UNFINISHED MISSION</span>
+      </button>
 
-        {/* Mission Destination Switcher */}
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
-          <button
-            onClick={() => onSelectMission && onSelectMission('apollo-15-lrv')}
-            className={`badge-tag ${activeMissionId === 'apollo-15-lrv' ? 'badge-tag--amber' : ''}`}
-            style={{ cursor: 'pointer', padding: '6px 12px' }}
-            aria-current={activeMissionId === 'apollo-15-lrv' ? 'page' : undefined}
-          >
-            01 MOON · LRV
-          </button>
-
-          <button
-            onClick={() => onSelectMission && onSelectMission('opportunity-mer')}
-            className={`badge-tag ${activeMissionId === 'opportunity-mer' ? 'badge-tag--amber' : ''}`}
-            style={{ cursor: 'pointer', padding: '6px 12px' }}
-            aria-current={activeMissionId === 'opportunity-mer' ? 'page' : undefined}
-          >
-            02 MARS · OPPORTUNITY
-          </button>
-
-          <button
-            onClick={() => onSelectMission && onSelectMission('voyager-1')}
-            className={`badge-tag ${activeMissionId === 'voyager-1' ? 'badge-tag--amber' : ''}`}
-            style={{ cursor: 'pointer', padding: '6px 12px' }}
-            aria-current={activeMissionId === 'voyager-1' ? 'page' : undefined}
-          >
-            03 DEEP SPACE · VOYAGER 1
-          </button>
-        </div>
-
-        {/* Citations & NASA Disclaimer Button */}
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-          {onReplayIntro && (
+      <div className="planet-hop-items">
+        {NAV_ITEMS.map((item) => {
+          const isActive = item.id === activeId;
+          return (
             <button
-              onClick={onReplayIntro}
-              className="badge-tag"
-              style={{ cursor: 'pointer', borderColor: 'var(--color-surface-border)' }}
-              aria-label="Replay prologue"
+              type="button"
+              key={item.id}
+              className={[
+                'planet-hop-item',
+                isActive ? 'planet-hop-item--active' : '',
+                pressedId === item.id ? 'planet-hop-item--pressed' : '',
+              ].filter(Boolean).join(' ')}
+              onClick={() => handleItemClick(item)}
+              onMouseEnter={() => setHoveredId(item.id)}
+              onMouseLeave={() => setHoveredId(null)}
+              aria-label={`Go to ${item.label}`}
+              aria-current={isActive ? 'page' : undefined}
             >
-              Prologue ↺
+              <PlanetIcon
+                type={item.planet}
+                hovered={hoveredId === item.id || pressedId === item.id}
+                reducedMotion={reducedMotion}
+                hidden={hidden}
+              />
+              <span className="planet-hop-label">{item.label}</span>
             </button>
-          )}
-          <button
-            onClick={onOpenSources}
-            className="badge-tag"
-            style={{ cursor: 'pointer', borderColor: 'var(--color-surface-border)' }}
-            aria-label="View verified NASA primary sources and legal disclaimers"
-          >
-            NASA Sources & Disclaimers
-          </button>
-        </div>
+          );
+        })}
+      </div>
 
+      <div className="planet-hop-utilities">
+        <button type="button" className="planet-hop-utility" onClick={onOpenSources}>
+          Sources
+        </button>
+        {onReplayIntro && (
+          <button type="button" className="planet-hop-utility" onClick={onReplayIntro}>
+            Prologue
+          </button>
+        )}
       </div>
     </nav>
   );

@@ -82,7 +82,12 @@ export default function App() {
       {introComplete && <ChildAstronaut />}
 
       {/* ── Persistent side scroll-progress timeline ── */}
-      {introComplete && <ScrollProgress />}
+      {introComplete && (
+        <ScrollProgress
+          activeMissionId={viewMode === 'mission' ? activeMissionId : null}
+          onSelectMission={handleSelectMission}
+        />
+      )}
       
       {/* Primary Sticky Telemetry Navigation Bar */}
       <Navigation

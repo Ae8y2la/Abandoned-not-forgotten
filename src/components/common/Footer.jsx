@@ -4,6 +4,7 @@ import { references } from '../../data/references.js';
 export default function Footer({ onOpenSources, onReplayIntro }) {
   return (
     <footer 
+      id="site-footer"
       role="contentinfo"
       style={{
         backgroundColor: 'var(--color-surface-charcoal)',

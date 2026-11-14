@@ -161,7 +161,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
   };
 
   return (
-    <article ref={articleRef} style={{ paddingBottom: 'var(--space-3xl)' }}>
+    <article id="mission-section" ref={articleRef} style={{ paddingBottom: 'var(--space-3xl)' }}>
       
       {/* Sticky Mission Sub-Header & Breadcrumb */}
       <nav 

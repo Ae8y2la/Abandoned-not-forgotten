@@ -2,13 +2,13 @@ import { useEffect, useRef, useState } from 'react';
 import './ScrollProgress.css';
 
 const SECTIONS = [
-  { label: 'SIGNAL',  position: 0    },
-  { label: 'WORLD',   position: 0.33 },
-  { label: 'MISSION', position: 0.66 },
-  { label: 'LEGACY',  position: 1    },
+  { label: 'SIGNAL',  position: 0,    id: 'signal-scene' },
+  { label: 'WORLD',   position: 0.33, id: 'choose-your-world' },
+  { label: 'MISSION', position: 0.66, id: 'mission-section' },
+  { label: 'LEGACY',  position: 1,    id: 'site-footer' },
 ];
 
-export default function ScrollProgress() {
+export default function ScrollProgress({ activeMissionId, onSelectMission }) {
   const [progress, setProgress] = useState(0);
   const rafRef = useRef(null);
   const latestScrollRef = useRef(0);
@@ -62,6 +62,29 @@ export default function ScrollProgress() {
 
   const activeIndex = getActiveIndex();
 
+  const handleSectionClick = (sectionId) => {
+    const section = document.getElementById(sectionId);
+    if (section) {
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      return;
+    }
+
+    if (activeMissionId && onSelectMission) {
+      onSelectMission('home');
+      window.setTimeout(() => {
+        document.getElementById(sectionId)?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
+      }, 120);
+      return;
+    }
+
+    if (sectionId === 'mission-section' && onSelectMission) {
+      onSelectMission('apollo-15-lrv');
+    }
+  };
+
   return (
     <div
       style={{
@@ -75,7 +98,6 @@ export default function ScrollProgress() {
         alignItems: 'center',
         height: '200px',
       }}
-      aria-hidden="true"
       className="scroll-progress"
     >
       {/* Track line */}
@@ -124,7 +146,10 @@ export default function ScrollProgress() {
             }}
           >
             {/* Label to the left */}
-            <span
+            <button
+              type="button"
+              onClick={() => handleSectionClick(section.id)}
+              aria-label={`Go to ${section.label}`}
               style={{
                 position: 'absolute',
                 right: 'calc(100% + 10px)',
@@ -134,19 +159,28 @@ export default function ScrollProgress() {
                 color: 'var(--color-telemetry-silver)',
                 whiteSpace: 'nowrap',
                 userSelect: 'none',
+                cursor: 'pointer',
+                border: 'none',
+                padding: 0,
+                background: 'transparent',
               }}
             >
               {section.label}
-            </span>
+            </button>
 
             {/* Dot */}
-            <div
+            <button
+              type="button"
+              onClick={() => handleSectionClick(section.id)}
+              aria-label={`Go to ${section.label}`}
               style={{
                 width: '8px',
                 height: '8px',
                 borderRadius: '50%',
                 border: '1.5px solid var(--color-lunar-amber)',
                 background: isActive ? 'var(--color-lunar-amber)' : 'transparent',
+                cursor: 'pointer',
+                padding: 0,
               }}
             />
           </div>
