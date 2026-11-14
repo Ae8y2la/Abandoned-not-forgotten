@@ -1,0 +1,81 @@
+/* ==========================================================================
+   THE UNFINISHED MISSION — Accessible CSS Reset & Focus Styles
+   ========================================================================== */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  background-color: var(--color-space-black);
+  color: var(--color-regolith-white);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  text-rendering: optimizeLegibility;
+}
+
+body {
+  min-height: 100vh;
+  line-height: 1.6;
+  background-color: var(--color-space-black);
+  overflow-x: hidden;
+}
+
+/* Explicit high-visibility focus indicator for keyboard navigation */
+:focus-visible {
+  outline: 3px solid var(--color-focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--radius-sm);
+}
+
+/* Remove default focus outline when using mouse click if not focused via keyboard */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Accessible Interactive Elements */
+button {
+  font-family: inherit;
+  font-size: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+a {
+  color: var(--color-amber-bright);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  color: var(--color-regolith-white);
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Mandatory Global prefers-reduced-motion Rule */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
