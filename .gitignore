@@ -22,3 +22,33 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Environment & secrets — NEVER commit these
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+secrets/
+credentials/
+
+# Python scripts runtime artifacts
+__pycache__/
+*.py[cod]
+*.pyo
+venv/
+.venv/
+*.egg-info/
+
+# NASA image pipeline temp/raw downloads
+*_temp.jpg
+*_temp.png
+*_raw.jpg
+*_raw.png
+
+# OS artifacts
+Thumbs.db
+ehthumbs.db
+Desktop.ini
