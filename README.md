@@ -113,7 +113,17 @@ Mission information is drawn from the sources listed below:
 
 ---
 
-## 🤖 AI Assistance & Research Disclosure
+## 📋 AI Use and Prompt Log
+
+A full record of every prompt given to AI, what changed in the code, and what the team corrected afterwards is in:
+
+**[docs/AI_PROMPT_LOG.md](docs/AI_PROMPT_LOG.md)**
+
+This file is intended for NASA Space Apps Challenge judges and covers all ten development stages, human corrections, and AI limitations encountered.
+
+---
+
+## 🤖 AI Assistance &amp; Research Disclosure
 
 In accordance with NASA Space Apps Challenge transparency guidelines:
 - **AI Tools Used:** Generative AI tools (**Claude** and **Antigravity**) assisted the team with frontend code development, initial narrative text drafting, and literature research synthesis.
