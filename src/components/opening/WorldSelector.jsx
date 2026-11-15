@@ -15,7 +15,8 @@ const destinations = [
     distance: '384,400 KM',
     lightDelay: '1.3 light-seconds',
     vehicle: 'Apollo 15 Lunar Roving Vehicle',
-    location: 'Station 9A · Hadley Rille',
+    // TODO: Verify Station 9A designation against NSSDCA record 1971-063C
+    location: 'Hadley-Apennine · Mare Imbrium',
     headline: 'The First Wheels on Another World',
     synopsis: 'How astronauts drove across an airless volcanic valley using resilient piano-wire wheels and dead-reckoning navigation.',
     statusLabel: 'VERIFIED PARKED',
@@ -32,7 +33,7 @@ const destinations = [
     vehicle: 'Opportunity Rover (MER-B)',
     location: 'Perseverance Valley · Endeavour Crater',
     headline: '14+ Years of Following the Water',
-    synopsis: 'Designed for 90 days, it survived 5,000 sols to uncover hematite spherules, gypsum veins, and ancient neutral water.',
+    synopsis: 'Designed for 90 days, it survived 5,000 sols to uncover hematite spherules, gypsum veins, and strong evidence of ancient liquid water.',
     statusLabel: 'RESTING IN VALLEY',
     accent: 'var(--color-mars-rust)',
     imageKey: 'opportunity_self_portrait',
@@ -42,8 +43,8 @@ const destinations = [
     id: 'voyager-1',
     number: '03',
     world: 'DEEP SPACE',
-    distance: '25.9 BILLION KM (1 LIGHT-DAY)',
-    lightDelay: '24.0 light-hours (one-way)',
+    distance: '~25.9 BILLION KM (~173 AU)',
+    lightDelay: '~24 hours (one-way)',
     vehicle: 'Voyager 1 Interstellar Spacecraft',
     location: 'Interstellar Space · Beyond Heliopause',
     headline: 'The First Messenger to the Stars',
@@ -129,7 +130,7 @@ export default function WorldSelector({ onSelectMission }) {
       ref={selectorRef}
       id="choose-your-world"
       aria-labelledby="world-selector-heading" 
-      style={{ padding: 'var(--space-2xl) 0 var(--space-3xl)' }}
+      style={{ padding: 'var(--space-2xl) 0 var(--space-3xl)', scrollMarginTop: '80px' }}
     >
       <div className="site-container">
         
@@ -148,7 +149,7 @@ export default function WorldSelector({ onSelectMission }) {
         </div>
 
         {/* Asymmetric Editorial Destination Ladder */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)' }}>
+        <div id="mission-section" style={{ display: 'flex', flexDirection: 'column', gap: 'var(--space-xl)', scrollMarginTop: '80px' }}>
           
           {destinations.map((dest) => {
             const isHovered = hoveredDestination === dest.id;
@@ -174,7 +175,7 @@ export default function WorldSelector({ onSelectMission }) {
                   backgroundColor: isHovered ? 'var(--color-surface-elevated)' : 'var(--color-surface-charcoal)',
                   border: `1px solid ${isHovered ? dest.accent : 'var(--color-surface-border)'}`,
                   borderRadius: 'var(--radius-lg)',
-                  padding: 'var(--space-xl)',
+                  padding: 'clamp(16px, 4vw, 48px)',
                   transition: 'background-color var(--transition-fast), border-color var(--transition-fast), transform var(--transition-fast)',
                   position: 'relative',
                   overflow: 'hidden',
@@ -193,7 +194,7 @@ export default function WorldSelector({ onSelectMission }) {
                   }} 
                 />
 
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 'var(--space-xl)', alignItems: 'center' }}>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(260px, 100%), 1fr))', gap: 'clamp(16px, 3vw, 48px)', alignItems: 'center' }}>
                   
                   {/* Left Column: Sector Index & Typographic Statement */}
                   <div>

@@ -6,7 +6,7 @@
 export const references = {
   disclaimer: {
     text: "This is an independent educational project created for the NASA Space Apps Challenge 2026. NASA names, insignia, and imagery are used for educational and informational purposes with appropriate attribution where required. This project does not imply NASA endorsement.",
-    aiDisclosure: "Parts of this project were built with AI assistance (Claude, Antigravity). All images are NASA imagery with credits. All factual content was checked against NASA sources by the team."
+    aiDisclosure: "AI Disclosure: AI tools (Claude, Antigravity) assisted with frontend code development, narrative text drafting, and research synthesis. All mission parameters, timeline events, coordinates, and scientific facts were checked and verified against primary NASA, JPL, and NSSDCA sources by the team."
   },
   
   apollo15: {
@@ -28,7 +28,17 @@ export const references = {
         verifiedNote: "Primary documentation for LRV 210 kg dry mass, four 0.25 hp series-wound DC hub motors, two 36V silver-zinc batteries (121 Ah each), 81.8 cm wire-mesh tires, and folded stowage."
       },
       {
+        id: "tn-d-7469",
+        // TODO: Verify document number TN D-7469 and retrieve from NASA NTRS before submission
+        title: "Lunar Roving Vehicle Handbook (NASA TN D-7469 — pending verification)",
+        organization: "NASA Manned Spacecraft Center",
+        year: "1971",
+        url: "https://ntrs.nasa.gov/",
+        verifiedNote: "Referenced for 5.0 km Walk-Back Safety Limit and dead-reckoning navigation specifications. Document number pending NTRS verification."
+      },
+      {
         id: "msc-05161",
+        // TODO: Verify report number MSC-05161 against NASA NTRS record before submission
         title: "Apollo 15 Mission Report (NASA MSC-05161)",
         organization: "NASA Manned Spacecraft Center, Houston, TX",
         year: "1971",
@@ -37,11 +47,12 @@ export const references = {
       },
       {
         id: "lroc-featured-site-4",
-        title: "LROC Featured Site: Apollo 15 Landing Site (Station 9A)",
+        // TODO: Verify Station 9A designation and exact parking coordinates against NSSDCA record 1971-063C
+        title: "LROC Featured Site: Apollo 15 Landing Site (Hadley-Apennine)",
         organization: "NASA / GSFC / Arizona State University (LROC)",
         year: "2010",
         url: "https://www.lroc.asu.edu/featured_sites/view_site/4",
-        verifiedNote: "Orbital verification showing LRV parked at 26.13174°N, 3.63803°E with tracks intact."
+        verifiedNote: "Orbital verification showing LRV parked in Hadley-Apennine with tracks intact (coordinates pending verification against NSSDCA 1971-063C)."
       },
       {
         id: "sample-15415",
@@ -58,8 +69,16 @@ export const references = {
   opportunity: {
     sources: [
       {
+        id: "nasa-mer-home",
+        title: "NASA Mars Exploration Rovers: Spirit and Opportunity",
+        organization: "NASA Science / Jet Propulsion Laboratory",
+        year: "2024",
+        url: "https://science.nasa.gov/mission/mars-exploration-rovers-spirit-and-opportunity/",
+        verifiedNote: "Official NASA mission page (Space Apps Resources list). Documents full mission milestones, science findings, 14+ year operation, and 45.16 km total drive distance."
+      },
+      {
         id: "nasa-science-mer",
-        title: "Mars Exploration Rovers: Spirit and Opportunity",
+        title: "Mars Exploration Rovers: Spirit and Opportunity Overview",
         organization: "NASA Science Mission Directorate",
         year: "2024",
         url: "https://science.nasa.gov/mission/mars-exploration-rovers-spirit-and-opportunity/",
@@ -75,11 +94,12 @@ export const references = {
       },
       {
         id: "mer-science-results",
+        // TODO: Verify HiRISE frame ESP_056955_1775 against HiRISE archive before submission
         title: "Science Results: Evidence of Past Water on Mars",
         organization: "NASA Science / Mars Exploration",
         year: "2023",
         url: "https://science.nasa.gov/mission/mars-exploration-rovers-spirit-and-opportunity/science/",
-        verifiedNote: "Confirms hematite blueberries, jarosite acidic epoch, Homestake calcium sulfate vein, and smectite clay minerals as evidence of neutral water."
+        verifiedNote: "Confirms hematite blueberries, jarosite acidic epoch, Homestake calcium sulfate vein, and smectite clay minerals as strong evidence of ancient liquid water."
       }
     ]
   },
@@ -100,7 +120,7 @@ export const references = {
         organization: "NASA Jet Propulsion Laboratory / Deep Space Network",
         year: "2026",
         url: "https://voyager.jpl.nasa.gov/mission/status/",
-        verifiedNote: "Real-time distance (~173 AU / 25.9B km), 3.7 m high-gain dish, 2 active science instruments (MAG, PWS), 8 powered down."
+        verifiedNote: "Real-time distance (~25.9B km / ~173 AU, ~24 light-hours one-way), 3.7 m high-gain dish, 2 active science instruments (MAG, PWS), 8 powered down."
       }
     ]
   }

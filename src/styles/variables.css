@@ -1,6 +1,6 @@
 /* ==========================================================================
    THE UNFINISHED MISSION — Design System Tokens & Variables
-   Palette contrast audited against WCAG 2.1 AA/AAA on #0B0D11 canvas
+   Palette contrast designed with accessibility in mind on #0B0D11 canvas
    ========================================================================== */
 
 :root {
@@ -59,4 +59,13 @@
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
+
+  /* Fluid Spacing Tokens (mobile-first, clamp-based) */
+  --space-fluid-sm: clamp(8px, 2vw, 16px);
+  --space-fluid-md: clamp(16px, 3vw, 24px);
+  --space-fluid-lg: clamp(24px, 4vw, 48px);
+  --space-fluid-xl: clamp(32px, 5vw, 64px);
+
+  /* Safe Area Insets */
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
 }

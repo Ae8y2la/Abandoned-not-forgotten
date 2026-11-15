@@ -284,6 +284,7 @@ export default function MarsEvidenceLab() {
                   <img 
                     src={activeClue.image} 
                     alt={activeClue.alt}
+                    loading="lazy"
                     style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} 
                   />
                 </div>
@@ -381,7 +382,7 @@ export default function MarsEvidenceLab() {
               ✓ SCIENTIFIC VERDICT COMPLETE: Mars Underwent Multi-Epoch Water Evolution
             </div>
             <p style={{ fontSize: '0.8125rem', color: 'var(--color-regolith-white)', margin: 0, maxWidth: '720px', lineHeight: 1.5 }}>
-              By analyzing these four minerals, Opportunity demonstrated that Mars was not merely wet once, but experienced distinct hydrological epochs—transitioning from ancient neutral, drinkable water (clays) to an acidic sulfurous era (jarosite) before drying into the desert we see today. (Note: Proves water history, strictly not proof of life).
+              By analyzing these four minerals, Opportunity demonstrated that Mars was not merely wet once, but experienced distinct hydrological epochs—transitioning from ancient neutral-pH water with strong evidence of ancient liquid water (clays) to an acidic sulfurous era (jarosite) before drying into the desert we see today. (Note: Proves water history, strictly not proof of life).
             </p>
           </div>
           <button

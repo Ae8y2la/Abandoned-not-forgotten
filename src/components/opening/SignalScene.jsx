@@ -33,13 +33,14 @@ function RotatingMoon() {
   return (
     <div
       aria-hidden="true"
+      className="signal-rotating-moon"
       style={{
         position: 'absolute',
-        right: 'clamp(-80px, -2vw, 30px)',
+        right: 'clamp(20px, 8vw, 170px)',
         top: '50%',
         transform: 'translateY(-52%)',
-        width: 'clamp(280px, 36vw, 520px)',
-        height: 'clamp(280px, 36vw, 520px)',
+        width: 'clamp(180px, 28vw, 480px)',
+        height: 'clamp(180px, 28vw, 480px)',
         pointerEvents: 'none',
         zIndex: 1,
       }}
@@ -56,6 +57,7 @@ function RotatingMoon() {
         <img
           src="/assets/moon-hero-isolated.png"
           alt="Crescent Moon"
+          loading="lazy"
           style={{
             width: '100%',
             height: '100%',
@@ -190,10 +192,11 @@ export default function SignalScene({ onEnter }) {
       aria-label="The Signal: Mission Introduction"
       style={{
         minHeight: '92vh',
+        minHeight: '92dvh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        padding: 'var(--space-2xl) var(--space-md)',
+        padding: 'clamp(24px, 4vw, 64px) var(--space-md)',
         position: 'relative',
         overflow: 'hidden'
       }}

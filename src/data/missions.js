@@ -21,8 +21,11 @@ export const missions = [
     sampleMass: "77.31 kg of lunar samples returned",
     statusBadge: "Parked on Lunar Surface",
     statusType: "PARKED",
-    coordinates: "26.13174°N, 3.63803°E",
-    locationName: "Station 9A · Hadley Rille, Mare Imbrium",
+    nssdcaId: "1971-063C",
+    nssdcaUrl: "https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1971-063C",
+    // TODO: Verify Station 9A designation and exact parking coordinates against NSSDCA record 1971-063C
+    coordinates: "Hadley-Apennine region (coordinates pending verification against NSSDCA 1971-063C)",
+    locationName: "Hadley Rille, Mare Imbrium",
     thematicSnippet: "The First Wheels on Another World",
     accentColor: "var(--color-lunar-amber)",
 
@@ -109,14 +112,16 @@ export const missions = [
     },
 
     // Beat 6: The Legacy & Verified Provenance
+    // TODO: Verify Station 9A designation and exact coordinates against NSSDCA record 1971-063C
     legacy: {
-      headline: "Still on the Moon: Station 9A",
-      statusStatement: "The Apollo 15 LRV remains where Dave Scott parked it on 2 August 1971: 165 meters east of the Lunar Module descent stage at 26.13174°N, 3.63803°E. Its color TV camera recorded the historic liftoff of Falcon, and in 2010, NASA's Lunar Reconnaissance Orbiter photographed the rover and its dual wheel tracks still clearly etched into the vacuum of Hadley.",
+      headline: "Still on the Moon: Hadley-Apennine",
+      statusStatement: "The Apollo 15 LRV remains where Dave Scott parked it on 2 August 1971: approximately 165 meters east of the Lunar Module descent stage in the Hadley-Apennine region. Its color TV camera recorded the historic liftoff of Falcon, and in 2010, NASA's Lunar Reconnaissance Orbiter photographed the rover and its dual wheel tracks still clearly etched into the vacuum of Hadley.",
       alsoLeftBehind: "Falcon Lunar Module descent stage and the Apollo Lunar Surface Experiments Package (ALSEP) station, which operated until NASA commanded shutdown on 30 September 1977.",
       sampleYield: "77.31 kg (170.4 lb) of verified lunar specimens returned to Earth (NSSDCA 1971-063C).",
-      verifiedCoordinates: "26.13174° N, 3.63803° E (Elevation -1,928 m)",
+      verifiedCoordinates: "Hadley Rille, Mare Imbrium (coordinates pending verification against NSSDCA 1971-063C)",
       lrocReference: "NASA / GSFC / Arizona State University LROC NAC Frame M175252641L",
-      primarySourceCount: 5
+      primarySourceCount: 5,
+      dataSourcesNote: "Mission parameters, traverse odometry, and surface stay durations are derived from the NASA Technical Reports Server (TN D-7469, MSC-05161) and NSSDCA record 1971-063C. Final rover position and wheel tracks verified via Lunar Reconnaissance Orbiter Camera (LROC) Narrow Angle Camera frames."
     }
   },
 
@@ -132,6 +137,7 @@ export const missions = [
     surfaceDuration: "More than 14 years (5,111 Sols)",
     statusBadge: "Resting in Perseverance Valley",
     statusType: "RESTING",
+    missionPageUrl: "https://science.nasa.gov/mission/mer/",
     coordinates: "1.9483°S, 354.4742°E",
     locationName: "Perseverance Valley · Endeavour Crater Rim",
     thematicSnippet: "14+ Years of Following the Water",
@@ -179,7 +185,7 @@ export const missions = [
     // Beat 3: Mission (Traverse Story - 100-150 words)
     missionStory: {
       headline: "From Eagle Crater to Perseverance Valley",
-      narrative: "Targeted to survive just 90 Martian sols and travel 1,000 meters, Opportunity touched down inside Eagle Crater in January 2004. It immediately hit the geological jackpot: bedrock filled with millimeter-sized hematite 'blueberries' and jarosite formed in ancient acidic water. Over the next decade and a half, the rover journeyed across 28.06 miles (45.16 kilometers)—surpassing the off-world driving record—climbing into Victoria Crater and reaching the ancient 22-kilometer rim of Endeavour Crater. There it discovered gypsum veins and smectite clay minerals formed in neutral-pH, fresh water. In June 2018, a catastrophic planet-encircling dust storm blotted out the Sun, starving the rover's solar arrays. After more than 1,000 recovery commands radiated by engineers, NASA declared its mission complete on 13 February 2019."
+      narrative: "Targeted to survive just 90 Martian sols and travel 1,000 meters, Opportunity touched down inside Eagle Crater in January 2004. It immediately hit the geological jackpot: bedrock filled with millimeter-sized hematite 'blueberries' and jarosite formed in ancient acidic water. Over the next decade and a half, the rover journeyed across 28.06 miles (45.16 kilometers)—surpassing the off-world driving record—climbing into Victoria Crater and reaching the ancient 22-kilometer rim of Endeavour Crater. There it discovered gypsum veins and smectite clay minerals formed in neutral-pH water, providing strong evidence of ancient liquid water. In June 2018, a catastrophic planet-encircling dust storm blotted out the Sun, starving the rover's solar arrays. After more than 1,000 recovery commands radiated by engineers, NASA declared its mission complete on 13 February 2019."
     },
 
     // Beat 4: Interactive Teaching Model Meta
@@ -189,10 +195,10 @@ export const missions = [
       conceptTaught: "Paleo-Hydrological Mineral Fingerprinting",
       modelLabel: "SIMPLIFIED TEACHING MODEL: PALEO-HYDROLOGICAL MINERAL ANALYSIS",
       clues: [
-        { id: "blueberries", mineral: "Hematite Spherules ('Blueberries')", condition: "Standing liquid water / wet sediment", verdict: "Proof of long-standing liquid groundwater in Meridiani." },
+        { id: "blueberries", mineral: "Hematite Spherules ('Blueberries')", condition: "Standing liquid water / wet sediment", verdict: "Strong evidence of ancient liquid groundwater in Meridiani." },
         { id: "jarosite", mineral: "Jarosite (Hydrated Iron Sulfate)", condition: "Highly acidic water environment", verdict: "Indicates harsh, highly acidic water during the Martian past." },
         { id: "gypsum", mineral: "Homestake Gypsum Vein", condition: "Neutral water flowing in bedrock fractures", verdict: "Pure calcium sulfate precipitated from circulating warm fractures." },
-        { id: "clay", mineral: "Smectite Clay Minerals (Phyllosilicates)", condition: "Neutral-pH, benign water chemistry", verdict: "CRITICAL: Proves neutral water conditions, NOT proof of life!" }
+        { id: "clay", mineral: "Smectite Clay Minerals (Phyllosilicates)", condition: "Neutral-pH, benign water chemistry", verdict: "CRITICAL: Strong evidence of ancient liquid water, NOT proof of life!" }
       ]
     },
 
@@ -222,26 +228,27 @@ export const missions = [
     // Beat 6: The Legacy & Verified Provenance
     legacy: {
       headline: "Resting in Perseverance Valley",
-      statusStatement: "Opportunity rests quietly in Perseverance Valley on the western rim of Endeavour Crater at 1.9483°S, 354.4742°E. Operating for more than 14 years—over 55 times its planned 90-sol design lifespan—it drove 28.06 miles (45.16 km), completing the first off-world marathon. (NASA's Perseverance rover surpassed this driving record on 11 October 2026 at 28.10 miles / 45.22 km). Over 835 recovery commands were radiated during the active listening window before final decommissioning on 13 February 2019.",
+      statusStatement: "Opportunity rests quietly in Perseverance Valley on the western rim of Endeavour Crater at 1.9483°S, 354.4742°E. Operating for more than 14 years—over 55 times its planned 90-sol design lifespan—it drove 28.06 miles (45.16 km), completing the first off-world marathon. (NASA's Perseverance rover surpassed this driving record on 11 October 2026 at 28.10 miles / 45.22 km). Over 835 recovery commands were radiated during the active listening window before final decommissioning on 13 February 2019. Note: The popular line 'My battery is low and it's getting dark' was a poetic interpretation of her final engineering telemetry, not a literal transmission.",
       verifiedCoordinates: "1.9483° S, 354.4742° E (Endeavour Rim)",
       lrocReference: "Photographed from Mars orbit by NASA Mars Reconnaissance Orbiter (HiRISE ESP_056955_1775).",
-      primarySourceCount: 6
+      primarySourceCount: 6,
+      dataSourcesNote: "Mission parameters, traverse records (45.16 km), and atmospheric optical depth measurements are derived from the NASA Mars Exploration Rovers mission page (science.nasa.gov/mission/mer/), JPL Athena Science Team dossiers, and HiRISE orbital verification."
     }
   },
 
   {
     id: "voyager-1",
     destination: "DEEP SPACE",
-    destinationSector: "Sector 03 · 25.9 BILLION KM (1 LIGHT-DAY)",
+    destinationSector: "Sector 03 · ~25.9 BILLION KM / ~173 AU (1 LIGHT-DAY)",
     machineName: "Voyager 1 Interstellar Spacecraft",
     designation: "Voyager 1 / NASA Jet Propulsion Laboratory",
-    lightTime: "24.0 light-hours (one-way)",
+    lightTime: "~24.0 light-hours (one-way)",
     landingDate: "5 September 1977 (Launch)",
     departureDate: "Active Interstellar Extended Mission (VIM)",
     surfaceDuration: "49+ Years in Deep Space Flight",
     statusBadge: "Active Interstellar Explorer (2 Instruments Online)",
     statusType: "ACTIVE",
-    coordinates: "~173.1 AU / RA 17h 15m, Dec +12° 02'",
+    coordinates: "~25.9 billion km (~173 AU) · RA 17h 15m, Dec +12° 02'",
     locationName: "Interstellar Space · Beyond the Heliopause",
     thematicSnippet: "The First Messenger to the Stars",
     accentColor: "var(--color-deep-gold)",
@@ -328,10 +335,11 @@ export const missions = [
     // Beat 6: The Legacy & Verified Provenance
     legacy: {
       headline: "Active Interstellar Explorer: Never Abandoned",
-      statusStatement: "Voyager 1 is not dead and has never been abandoned. It remains an active interplanetary spacecraft communicating daily with NASA's Deep Space Network stations in Madrid, Goldstone, and Canberra. Operating in interstellar space over 25.9 billion kilometers away, it carries the Golden Record—a message from humanity to any civilization that might one day discover it.",
-      verifiedCoordinates: "173.1 AU / RA 17h 15m, Dec +12° 02' (Ophiuchus)",
+      statusStatement: "Voyager 1 is not dead and has never been abandoned. It remains an active interplanetary spacecraft communicating daily with NASA's Deep Space Network stations in Madrid, Goldstone, and Canberra. Operating in interstellar space over ~25.9 billion kilometers (~173 AU) away, it carries the Golden Record—a message from humanity to any civilization that might one day discover it.",
+      verifiedCoordinates: "~25.9 billion km (~173 AU) · RA 17h 15m, Dec +12° 02' (Ophiuchus)",
       lrocReference: "Tracked live via NASA Deep Space Network Telecommunications and NASA Eyes on the Solar System.",
-      primarySourceCount: 6
+      primarySourceCount: 6,
+      dataSourcesNote: "Distance metrics (~25.9 billion km / ~173 AU), ~24-hour one-way speed-of-light telemetry latency, and instrument statuses are derived from the NASA JPL Deep Space Network (DSN) Telecommunications logs and Voyager Interstellar Mission (VIM) archives."
     }
   }
 ];

@@ -156,7 +156,7 @@ export default function CinematicIntro({ onComplete }) {
   const plumeRef = useRef(null);
   const warpRef = useRef(null);
 
-  const [showSkip, setShowSkip] = useState(false);
+  const [showSkip, setShowSkip] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
   const timelineRef = useRef(null);
 
@@ -378,10 +378,12 @@ export default function CinematicIntro({ onComplete }) {
       role="dialog"
       aria-modal="true"
       aria-label="Prologue: The Unfinished Mission"
+      onClick={handleSkip}
+      title="Click or tap anywhere to skip prologue"
     >
       {/* ── Visual Ambience Layers ── */}
-      <div className="intro-cosmic-backdrop" />
-      <div className="intro-film-grain" />
+      <div className="intro-cosmic-backdrop" aria-hidden="true" />
+      <div className="intro-film-grain" aria-hidden="true" />
 
       {/* Subtle Star Drift in Background */}
       <div className="intro-starfield" aria-hidden="true">
@@ -482,7 +484,7 @@ export default function CinematicIntro({ onComplete }) {
       </div>
 
       {/* ── Persistent Floating Control Bar (Minimal & Restrained) ── */}
-      <div className="intro-control-bar">
+      <div className="intro-control-bar" onClick={(e) => e.stopPropagation()}>
         {/* Audio Mute/Unmute */}
         <button
           onClick={toggleSound}
@@ -492,11 +494,11 @@ export default function CinematicIntro({ onComplete }) {
           {isMuted ? '🔇 AUDIO: OFF' : '🔊 AUDIO: ACTIVE'}
         </button>
 
-        {/* Skip Button (Appears gracefully after 2s) */}
+        {/* Skip Button (Clearly visible, supports click, tap or ESC) */}
         {showSkip && (
           <button
             onClick={handleSkip}
-            className="intro-btn"
+            className="intro-btn intro-btn--skip"
             aria-label="Skip prologue and proceed to missions"
           >
             SKIP PROLOGUE [ESC] ⇢

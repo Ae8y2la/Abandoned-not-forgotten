@@ -152,7 +152,7 @@ export const imageCredits = [
 
 export const nasaDisclaimer = "Independent educational project created for the NASA Space Apps Challenge; NASA names and imagery are used for educational purposes with attribution; this does not imply NASA endorsement.";
 
-export const aiDisclosure = "Parts of this project were built with AI assistance (Claude, Antigravity). All images are NASA imagery with credits. All factual content was checked against NASA sources by the team.";
+export const aiDisclosure = "AI Disclosure: Generative AI tools (Claude, Antigravity) assisted the team with code development, initial narrative text drafting, and literature research. All mission parameters, timeline events, coordinates, and scientific facts were checked and verified against primary NASA, JPL, and NSSDCA sources by the team.";
 
 // Helper to get image record by key
 export const getImageCredit = (key) => imageCredits.find((c) => c.key === key);

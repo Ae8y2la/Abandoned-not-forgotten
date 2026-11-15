@@ -417,7 +417,7 @@ const MARS_STORY_BEATS = [
   },
   {
     phase: "02 // 14 YEARS ACROSS THE RED PLANET",
-    fullText: "Instead, she journeyed for 14 years across 45 kilometers—finding ancient lakebeds, hematite blueberries, and proof of fresh water."
+    fullText: "Instead, she journeyed for 14 years across 45 kilometers—finding ancient lakebeds, hematite blueberries, and strong evidence of ancient liquid water."
   },
   {
     phase: "03 // THE PLANET-ENCIRCLING STORM",
@@ -425,7 +425,7 @@ const MARS_STORY_BEATS = [
   },
   {
     phase: "04 // THE FINAL TRANSMISSION",
-    fullText: "Starved of sunlight, the brave rover sent her final telemetry from Perseverance Valley: 'My battery is low and it's getting dark.'"
+    fullText: "Starved of sunlight, the brave rover sent her final telemetry from Perseverance Valley—popularized as 'My battery is low and it's getting dark' (a poetic interpretation of her final data, not a literal transmission)."
   },
   {
     phase: "05 // PERSEVERANCE VALLEY · SILENT REST",
@@ -528,7 +528,7 @@ export default function Scene2Mars() {
             <Canvas
               camera={{ position: [0, 2.8, 7.5], fov: 45 }}
               gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
-              dpr={[1, 1.5]}
+              dpr={[1, Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5)]}
             >
               <MarsScene scrollProgress={scrollProgress} />
             </Canvas>
@@ -545,7 +545,18 @@ export default function Scene2Mars() {
               <div className="scene2-hud-tag">
                 SCENE 02 // OPPORTUNITY MER-B
               </div>
-              <div className="scene2-power-hud">
+              <div style={{ fontSize: '0.625rem', fontFamily: 'var(--font-mono)', marginTop: '3px' }}>
+                <span style={{ color: 'var(--color-telemetry-silver)' }}>ARCHIVE: </span>
+                <a
+                  href="https://science.nasa.gov/mission/mer/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--color-mars-rust, #E07A5F)', textDecoration: 'underline' }}
+                >
+                  NASA MER Mission Page ↗
+                </a>
+              </div>
+              <div className="scene2-power-hud" style={{ marginTop: '4px' }}>
                 <span style={{ fontSize: '0.625rem', color: 'var(--color-telemetry-silver)' }}>SOLAR ARRAY:</span>
                 <div className="scene2-power-bar">
                   <div
@@ -581,7 +592,8 @@ export default function Scene2Mars() {
             >
               <span className="scene2-story-phase">{activeBeat.phase}</span>
               <p className="scene2-story-text">
-                {displayedText}
+                <span aria-hidden="true">{displayedText}</span>
+                <span className="visually-hidden">{activeBeat.fullText}</span>
                 <span className="scene2-typewriter-cursor" aria-hidden="true" />
               </p>
             </div>

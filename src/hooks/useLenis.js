@@ -18,6 +18,14 @@ export default function useLenis() {
       return;
     }
 
+    // Disable smooth-scroll virtualisation on touch/coarse devices to ensure 60fps native feel
+    const isTouch =
+      window.matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
+    if (isTouch) {
+      lenisRef.current = null;
+      return;
+    }
+
     const lenis = new Lenis({
       duration: 1.2,
       easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -25,6 +33,7 @@ export default function useLenis() {
     });
 
     lenisRef.current = lenis;
+    window.__lenis = lenis;
 
     lenis.on('scroll', () => {
       ScrollTrigger.update();
@@ -39,10 +48,22 @@ export default function useLenis() {
 
     rafId = requestAnimationFrame(raf);
 
+    // Pause rendering/updates when tab is hidden to save battery & CPU
+    const handleVisibility = () => {
+      if (document.hidden) {
+        lenis.stop();
+      } else {
+        lenis.start();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
     return () => {
       cancelAnimationFrame(rafId);
+      document.removeEventListener('visibilitychange', handleVisibility);
       lenis.destroy();
       lenisRef.current = null;
+      window.__lenis = null;
     };
   }, []);
 

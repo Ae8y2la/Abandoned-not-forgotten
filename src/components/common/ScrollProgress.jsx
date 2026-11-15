@@ -1,191 +1,157 @@
 import { useEffect, useRef, useState } from 'react';
+import { gsap } from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import './ScrollProgress.css';
 
+gsap.registerPlugin(ScrollTrigger);
+
 const SECTIONS = [
-  { label: 'SIGNAL',  position: 0,    id: 'signal-scene' },
-  { label: 'WORLD',   position: 0.33, id: 'choose-your-world' },
-  { label: 'MISSION', position: 0.66, id: 'mission-section' },
-  { label: 'LEGACY',  position: 1,    id: 'site-footer' },
+  { label: 'SIGNAL',  id: 'signal-scene' },
+  { label: 'WORLD',   id: 'choose-your-world' },
+  { label: 'MISSION', id: 'mission-section' },
+  { label: 'LEGACY',  id: 'site-footer' },
 ];
 
 export default function ScrollProgress({ activeMissionId, onSelectMission }) {
   const [progress, setProgress] = useState(0);
-  const rafRef = useRef(null);
-  const latestScrollRef = useRef(0);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const containerRef = useRef(null);
 
   useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const reducedMotion = mediaQuery.matches;
+    // Small delay to allow react rendering of newly selected views/routes
+    const timer = setTimeout(() => {
+      const triggers = [];
 
-    const handleScroll = () => {
-      const scrollTop = window.scrollY;
-      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-      latestScrollRef.current = docHeight > 0 ? scrollTop / docHeight : 0;
+      // Global document progress indicator
+      const globalST = ScrollTrigger.create({
+        start: 0,
+        end: 'max',
+        onUpdate: (self) => {
+          setProgress(self.progress);
+        },
+      });
+      triggers.push(globalST);
 
-      if (reducedMotion) {
-        setProgress(latestScrollRef.current);
-        return;
-      }
+      // Section ScrollTrigger Scroll-Spy
+      SECTIONS.forEach((sec, idx) => {
+        let el = document.getElementById(sec.id);
+        if (!el && sec.id === 'mission-section') {
+          el = document.querySelector('article#mission-section, #mission-section, #choose-your-world');
+        }
+        if (!el && sec.id === 'site-footer') {
+          el = document.querySelector('#site-footer, #beat-legacy, footer');
+        }
+        if (!el) return;
 
-      if (rafRef.current === null) {
-        rafRef.current = requestAnimationFrame(() => {
-          setProgress(latestScrollRef.current);
-          rafRef.current = null;
+        const st = ScrollTrigger.create({
+          trigger: el,
+          start: 'top 55%',
+          end: 'bottom 55%',
+          onEnter: () => setActiveIndex(idx),
+          onEnterBack: () => setActiveIndex(idx),
         });
-      }
-    };
+        triggers.push(st);
+      });
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    // Set initial value
-    handleScroll();
+      return () => {
+        triggers.forEach((st) => st.kill());
+      };
+    }, 150);
 
     return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (rafRef.current !== null) {
-        cancelAnimationFrame(rafRef.current);
-      }
+      clearTimeout(timer);
     };
-  }, []);
+  }, [activeMissionId]);
 
-  const getActiveIndex = () => {
-    let closest = 0;
-    let minDist = Infinity;
-    SECTIONS.forEach((section, i) => {
-      const dist = Math.abs(section.position - progress);
-      if (dist < minDist) {
-        minDist = dist;
-        closest = i;
-      }
-    });
-    return closest;
+  const scrollToTarget = (target) => {
+    if (!target) return;
+    if (window.__lenis) {
+      window.__lenis.scrollTo(target, {
+        offset: -40,
+        duration: 1.4,
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      });
+    } else {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   };
 
-  const activeIndex = getActiveIndex();
-
-  const handleSectionClick = (sectionId) => {
-    const section = document.getElementById(sectionId);
-    if (section) {
-      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      return;
+  const handleSectionClick = (sectionId, index) => {
+    // If in mission view and user clicks SIGNAL or WORLD, navigate back to home then scroll
+    if (activeMissionId && (sectionId === 'signal-scene' || sectionId === 'choose-your-world')) {
+      if (onSelectMission) {
+        onSelectMission('home');
+        setTimeout(() => {
+          const el = document.getElementById(sectionId);
+          if (el) {
+            scrollToTarget(el);
+          } else {
+            window.scrollTo({ top: sectionId === 'signal-scene' ? 0 : 500, behavior: 'smooth' });
+          }
+        }, 120);
+        return;
+      }
     }
 
-    if (activeMissionId && onSelectMission) {
+    let el = document.getElementById(sectionId);
+    if (!el && sectionId === 'mission-section') {
+      el = document.querySelector('article#mission-section, #mission-section');
+    }
+    if (!el && sectionId === 'site-footer') {
+      el = document.querySelector('footer, #site-footer, #beat-legacy');
+    }
+
+    if (el) {
+      scrollToTarget(el);
+      setActiveIndex(index);
+    } else if (onSelectMission && sectionId === 'mission-section') {
       onSelectMission('home');
-      window.setTimeout(() => {
-        document.getElementById(sectionId)?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
+      setTimeout(() => {
+        const target = document.getElementById('mission-section') || document.getElementById('choose-your-world');
+        if (target) scrollToTarget(target);
       }, 120);
-      return;
-    }
-
-    if (sectionId === 'mission-section' && onSelectMission) {
-      onSelectMission('apollo-15-lrv');
     }
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        right: '24px',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        zIndex: 50,
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        height: '200px',
-      }}
+    <nav
+      ref={containerRef}
       className="scroll-progress"
+      aria-label="Mission flight-path waypoints"
     >
-      {/* Track line */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: 0,
-          transform: 'translateX(-50%)',
-          width: '2px',
-          height: '100%',
-          background: 'rgba(255,255,255,0.15)',
-          borderRadius: '1px',
-        }}
-      />
+      {/* Background Track Line */}
+      <div className="scroll-progress-track" aria-hidden="true">
+        <div
+          className="scroll-progress-fill"
+          style={{ height: `${Math.min(100, Math.max(0, progress * 100))}%` }}
+        />
+      </div>
 
-      {/* Progress fill line */}
-      <div
-        style={{
-          position: 'absolute',
-          left: '50%',
-          top: 0,
-          transform: 'translateX(-50%)',
-          width: '2px',
-          height: `${progress * 100}%`,
-          background: 'var(--color-lunar-amber)',
-          borderRadius: '1px',
-          transition: 'none',
-        }}
-      />
-
-      {/* Dots */}
-      {SECTIONS.map((section, i) => {
-        const isActive = i === activeIndex;
-        return (
-          <div
-            key={section.label}
-            style={{
-              position: 'absolute',
-              top: `${section.position * 100}%`,
-              left: '50%',
-              transform: `translate(-50%, -50%) scale(${isActive ? 1.4 : 1})`,
-              display: 'flex',
-              alignItems: 'center',
-              transition: 'transform 0.2s ease',
-            }}
-          >
-            {/* Label to the left */}
-            <button
-              type="button"
-              onClick={() => handleSectionClick(section.id)}
-              aria-label={`Go to ${section.label}`}
-              style={{
-                position: 'absolute',
-                right: 'calc(100% + 10px)',
-                fontSize: '0.6rem',
-                fontFamily: 'var(--font-sans)',
-                letterSpacing: '0.1em',
-                color: 'var(--color-telemetry-silver)',
-                whiteSpace: 'nowrap',
-                userSelect: 'none',
-                cursor: 'pointer',
-                border: 'none',
-                padding: 0,
-                background: 'transparent',
-              }}
+      {/* Nav Waypoints List */}
+      <ul className="scroll-progress-list" role="list">
+        {SECTIONS.map((sec, i) => {
+          const isActive = i === activeIndex;
+          const posPercent = (i / (SECTIONS.length - 1)) * 100;
+          return (
+            <li
+              key={sec.label}
+              className="scroll-progress-item"
+              style={{ top: `${posPercent}%` }}
             >
-              {section.label}
-            </button>
-
-            {/* Dot */}
-            <button
-              type="button"
-              onClick={() => handleSectionClick(section.id)}
-              aria-label={`Go to ${section.label}`}
-              style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                border: '1.5px solid var(--color-lunar-amber)',
-                background: isActive ? 'var(--color-lunar-amber)' : 'transparent',
-                cursor: 'pointer',
-                padding: 0,
-              }}
-            />
-          </div>
-        );
-      })}
-    </div>
+              <button
+                type="button"
+                onClick={() => handleSectionClick(sec.id, i)}
+                className={`scroll-progress-button ${isActive ? 'is-active' : ''}`}
+                aria-label={`Jump to ${sec.label} stage`}
+                aria-current={isActive ? 'true' : undefined}
+              >
+                <span className="scroll-progress-label">{sec.label}</span>
+                <span className="scroll-progress-dot" aria-hidden="true" />
+              </button>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
   );
 }

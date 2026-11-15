@@ -13,6 +13,7 @@
 import { useRef, useEffect, useMemo, useState, useCallback } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import WebGLErrorBoundary from './WebGLErrorBoundary.jsx';
 
 // ─── constants ───────────────────────────────────────────────────────────────
 const STAR_COUNT          = 3200;
@@ -274,21 +275,23 @@ export default function StarfieldBackground() {
       }}
       aria-hidden="true"
     >
-      <Canvas
-        camera={{ position: [0, 0, 5], fov: 75, near: 0.1, far: 1000 }}
-        gl={{
-          antialias:          false,
-          alpha:              true,
-          powerPreference:    'high-performance',
-          preserveDrawingBuffer: false,
-        }}
-        style={{ background: 'transparent' }}
-        frameloop={reduced ? 'demand' : 'always'}
-        dpr={[1, 1.5]}
-      >
-        <StarField    reduced={reduced} />
-        <ShootingStars reduced={reduced} />
-      </Canvas>
+      <WebGLErrorBoundary missionName="Deep Space Starfield">
+        <Canvas
+          camera={{ position: [0, 0, 5], fov: 75, near: 0.1, far: 1000 }}
+          gl={{
+            antialias:          false,
+            alpha:              true,
+            powerPreference:    'high-performance',
+            preserveDrawingBuffer: false,
+          }}
+          style={{ background: 'transparent' }}
+          frameloop={reduced ? 'demand' : 'always'}
+          dpr={[1, 1.5]}
+        >
+          <StarField    reduced={reduced} />
+          <ShootingStars reduced={reduced} />
+        </Canvas>
+      </WebGLErrorBoundary>
     </div>
   );
 }

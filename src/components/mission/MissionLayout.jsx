@@ -6,10 +6,12 @@ import { MOTION_DURATION, MOTION_EASE, refreshScrollTrigger } from '../../styles
 import LunarRoverSim from '../interactions/LunarRoverSim.jsx';
 import MarsEvidenceLab from '../interactions/MarsEvidenceLab.jsx';
 import InterstellarPing from '../interactions/InterstellarPing.jsx';
-import Scene1Moon from './Scene1Moon.jsx';
-import Scene2Mars from './Scene2Mars.jsx';
-import Scene3Voyager from './Scene3Voyager.jsx';
 import { imageCredits } from '../../data/credits.js';
+import WebGLErrorBoundary from '../common/WebGLErrorBoundary.jsx';
+
+const Scene1Moon = React.lazy(() => import('./Scene1Moon.jsx'));
+const Scene2Mars = React.lazy(() => import('./Scene2Mars.jsx'));
+const Scene3Voyager = React.lazy(() => import('./Scene3Voyager.jsx'));
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -189,7 +191,9 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
               cursor: 'pointer',
               backgroundColor: 'transparent',
               border: 'none',
-              padding: '4px 0'
+              padding: '8px 12px',
+              minHeight: '44px',
+              minWidth: '44px'
             }}
           >
             <ArrowLeft size={14} aria-hidden="true" />
@@ -225,17 +229,45 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
       </nav>
 
       {/* Cinematic Pinned 3D Moon Scene (Scene 1) */}
-      {mission.id === 'apollo-15-lrv' && <Scene1Moon />}
+      {mission.id === 'apollo-15-lrv' && (
+        <WebGLErrorBoundary
+          missionName="Moon — Apollo 15 LRV"
+          gradientColors={['#3a3f4a', '#0B0D11']}
+          storyText="LRV-001 rests at Hadley-Apennine, Mare Imbrium — the first car ever driven on another world, 27.9 km across grey basaltic regolith under a black lunar sky."
+        >
+          <React.Suspense fallback={<div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-muted-slate)', fontFamily: 'var(--font-mono, monospace)', fontSize: '0.8125rem', letterSpacing: '0.15em' }}>LOADING 3D ARCHIVE...</div>}>
+            <Scene1Moon />
+          </React.Suspense>
+        </WebGLErrorBoundary>
+      )}
 
       {/* Cinematic Pinned 3D Mars Scene (Scene 2) */}
-      {mission.id === 'opportunity-mer' && <Scene2Mars />}
+      {mission.id === 'opportunity-mer' && (
+        <WebGLErrorBoundary
+          missionName="Mars — Opportunity Rover"
+          gradientColors={['#8B3a2a', '#1a0e0b']}
+          storyText="Opportunity rests in Perseverance Valley, Endeavour Crater — after 5,111 sols and 45.16 km, her solar panels silenced by a global dust storm on 10 June 2018."
+        >
+          <React.Suspense fallback={<div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-muted-slate)', fontFamily: 'var(--font-mono, monospace)', fontSize: '0.8125rem', letterSpacing: '0.15em' }}>LOADING 3D ARCHIVE...</div>}>
+            <Scene2Mars />
+          </React.Suspense>
+        </WebGLErrorBoundary>
+      )}
 
       {/* Cinematic Pinned 3D Deep Space Scene (Scene 3) & Finale */}
       {mission.id === 'voyager-1' && (
-        <Scene3Voyager
-          onExploreAgain={onBackToSelector}
-          onOpenSources={onOpenSources}
-        />
+        <WebGLErrorBoundary
+          missionName="Deep Space — Voyager 1"
+          gradientColors={['#0a0a1a', '#050508']}
+          storyText="Voyager 1 drifts ~25.9 billion km from Earth — in interstellar space beyond the heliosphere — still transmitting at 160 bits per second, 47 years after launch."
+        >
+          <React.Suspense fallback={<div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-muted-slate)', fontFamily: 'var(--font-mono, monospace)', fontSize: '0.8125rem', letterSpacing: '0.15em' }}>LOADING 3D ARCHIVE...</div>}>
+            <Scene3Voyager
+              onExploreAgain={onBackToSelector}
+              onOpenSources={onOpenSources}
+            />
+          </React.Suspense>
+        </WebGLErrorBoundary>
       )}
 
       {/* Hero Header with Authentic NASA Master Photograph */}
@@ -318,6 +350,34 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
           <div className="font-telemetry" style={{ color: 'var(--color-telemetry-silver)' }}>
             {mission.locationName} · {mission.coordinates}
           </div>
+
+          {/* Official NSSDCA ID / Mission Archive Link */}
+          {mission.nssdcaId && (
+            <div style={{ marginTop: '6px', fontSize: '0.8125rem' }}>
+              <span style={{ color: 'var(--color-telemetry-silver)' }}>NASA NSSDCA Master Catalog ID: </span>
+              <a
+                href={mission.nssdcaUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: mission.accentColor, textDecoration: 'underline' }}
+              >
+                {mission.nssdcaId} (Apollo 15 LM / ALSEP / LRV) ↗
+              </a>
+            </div>
+          )}
+          {mission.missionPageUrl && (
+            <div style={{ marginTop: '6px', fontSize: '0.8125rem' }}>
+              <span style={{ color: 'var(--color-telemetry-silver)' }}>NASA Mission Page: </span>
+              <a
+                href={mission.missionPageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: mission.accentColor, textDecoration: 'underline' }}
+              >
+                NASA Mars Exploration Rovers (MER) Mission Archive ↗
+              </a>
+            </div>
+          )}
         </div>
       </header>
 
@@ -421,7 +481,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
           </p>
 
           {/* Interactive Hardware Anatomy Selector */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-md)' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(270px, 100%), 1fr))', gap: 'var(--space-md)' }}>
             
             {/* Component Buttons */}
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }} role="tablist" aria-label="Machine components">
@@ -506,7 +566,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
             BEAT 3: MISSION (The Traverse Story)
             ================================================================== */}
         <section id="beat-traverse" aria-labelledby="beat-mission-heading" style={{ marginBottom: 'var(--space-3xl)' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-xl)', alignItems: 'center' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(270px, 100%), 1fr))', gap: 'var(--space-xl)', alignItems: 'center' }}>
             
             <div>
               <div className="font-telemetry" style={{ color: mission.accentColor, marginBottom: 'var(--space-xs)' }}>
@@ -625,7 +685,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
           </div>
 
           {/* Scientific Discoveries Grid */}
-          <div className="science-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-md)', marginBottom: 'var(--space-2xl)' }}>
+          <div className="science-cards-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(270px, 100%), 1fr))', gap: 'var(--space-md)', marginBottom: 'var(--space-2xl)' }}>
             {mission.science.discoveries.map((item, index) => (
               <div 
                 key={item.title}
@@ -726,6 +786,27 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
                   </div>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* Data Sources Note */}
+          {mission.legacy.dataSourcesNote && (
+            <div 
+              style={{
+                marginTop: 'var(--space-md)',
+                marginBottom: 'var(--space-md)',
+                padding: 'var(--space-md)',
+                backgroundColor: 'rgba(255, 255, 255, 0.03)',
+                borderRadius: 'var(--radius-sm)',
+                border: '1px solid var(--color-surface-border-subtle)'
+              }}
+            >
+              <div className="font-telemetry" style={{ fontSize: '0.75rem', color: 'var(--color-amber-bright)', textTransform: 'uppercase', marginBottom: '4px', letterSpacing: '0.08em' }}>
+                NASA Data Sources Note
+              </div>
+              <p style={{ fontSize: '0.8125rem', color: 'var(--color-telemetry-silver)', lineHeight: 1.6, margin: 0 }}>
+                {mission.legacy.dataSourcesNote}
+              </p>
             </div>
           )}
 

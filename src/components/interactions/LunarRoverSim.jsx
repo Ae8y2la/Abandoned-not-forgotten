@@ -9,25 +9,32 @@ export default function LunarRoverSim() {
   const [batteryAh, setBatteryAh] = useState(242); // 2 x 121 Ah
   const [trail, setTrail] = useState([{ x: 0, y: 0 }]);
   const [notification, setNotification] = useState(null);
+  const sectionRef = useRef(null);
 
   // Constants
   const MAX_WALKBACK_KM = 5.0; // Real Apollo 15 max distance from Falcon was 5.0 km on EVA 2
   const canvasRef = useRef(null);
 
-  // Dead-Reckoning Calculations (Mirroring NASA TN D-7469)
-  const rangeToLm = Math.sqrt(posX * posX + posY * posY);
+  // Dead-Reckoning Calculations (NASA TN D-7469)
+  // Distance from origin (0, 0)
+  const rangeToLm = Math.hypot(posX, posY);
   // Bearing from rover back to Lunar Module (0, 0)
   let bearingToLmDeg = (Math.atan2(-posX, -posY) * 180) / Math.PI;
   if (bearingToLmDeg < 0) bearingToLmDeg += 360;
 
   // Move Rover
   const driveRover = useCallback((distanceDeltaKm, turnDeltaDeg = 0) => {
-    setHeadingDeg((prev) => (prev + turnDeltaDeg + 360) % 360);
+    let currentHeading = headingDeg;
+    if (turnDeltaDeg !== 0) {
+      currentHeading = (headingDeg + turnDeltaDeg + 360) % 360;
+      setHeadingDeg(currentHeading);
+    }
 
     if (distanceDeltaKm !== 0) {
-      const rad = (headingDeg * Math.PI) / 180;
+      const rad = (currentHeading * Math.PI) / 180;
       const dx = distanceDeltaKm * Math.sin(rad);
       const dy = distanceDeltaKm * Math.cos(rad);
+      const stepDist = Math.hypot(dx, dy);
 
       setPosX((prevX) => {
         const nextX = prevX + dx;
@@ -46,9 +53,9 @@ export default function LunarRoverSim() {
         return nextX;
       });
 
-      const absDist = Math.abs(distanceDeltaKm);
+      // Maintain odometer as exact unrounded accumulator from displacement history
       setOdometerKm((prev) => {
-        const nextOdo = +(prev + absDist).toFixed(2);
+        const nextOdo = prev + stepDist;
         // Check benchmarks
         if (prev < 10.3 && nextOdo >= 10.3) {
           setNotification("Milestone: Surpassed Apollo 15 EVA-1 Traverse (10.3 km)!");
@@ -59,7 +66,7 @@ export default function LunarRoverSim() {
       });
 
       // Battery consumption (~0.8 Ah per km driven under 36V silver-zinc load)
-      setBatteryAh((prev) => Math.max(12, +(prev - absDist * 0.8).toFixed(1)));
+      setBatteryAh((prev) => Math.max(12, +(prev - stepDist * 0.8).toFixed(1)));
     }
   }, [headingDeg]);
 
@@ -78,15 +85,26 @@ export default function LunarRoverSim() {
     setNotification("Rover reset to Lunar Module 'Falcon' position.");
   };
 
-  // Keyboard navigation listener (WASD / Arrows)
+  // Keyboard navigation listener (WASD / Arrows) — scoped to simulator section focus
   useEffect(() => {
     const handleKeyDown = (e) => {
-      // Prevent scrolling when using arrow keys inside simulation
+      // Only intercept arrow/WASD keys when focus is within the simulator section
+      const section = sectionRef.current;
+      const isInsideSection = section && section.contains(document.activeElement);
+
       if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) {
-        if (document.activeElement.tagName !== 'INPUT') {
+        // Only preventDefault when focus is inside the simulator (or on the section itself)
+        // This prevents blocking page scrolling when user is elsewhere
+        if (isInsideSection && document.activeElement.tagName !== 'INPUT') {
           e.preventDefault();
+        } else if (!isInsideSection) {
+          // Don't handle movement keys when outside the simulator
+          return;
         }
       }
+
+      // Only drive rover when inside the simulator section
+      if (!isInsideSection) return;
 
       switch (e.key) {
         case 'w':
@@ -253,7 +271,9 @@ export default function LunarRoverSim() {
 
   return (
     <section 
+      ref={sectionRef}
       aria-label="Apollo 15 Lunar Rover Navigation Simulator"
+      tabIndex={-1}
       style={{
         backgroundColor: 'var(--color-surface-charcoal)',
         border: '1px solid var(--color-surface-border)',
@@ -265,7 +285,7 @@ export default function LunarRoverSim() {
       {/* Simulation Header & Mandatory Educational Badge */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 'var(--space-xs)', marginBottom: 'var(--space-md)' }}>
         <span className="badge-tag badge-tag--model">
-          Simplified model · Dead-Reckoning Navigation & 5.0 km Walk-Back Limit
+          Simplified model · Dead-Reckoning Navigation &amp; 5.0 km Walk-Back Limit
         </span>
         <span className="badge-tag" style={{ color: 'var(--color-telemetry-silver)' }}>
           NASA TN D-7469 ALGORITHM
@@ -285,12 +305,12 @@ export default function LunarRoverSim() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-md)', alignItems: 'start' }}>
         
         {/* Tactical Map Canvas */}
-        <div style={{ position: 'relative', width: '100%', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--color-surface-border)' }}>
+        <div style={{ position: 'relative', width: '100%', maxWidth: '100%', borderRadius: 'var(--radius-md)', overflow: 'hidden', border: '1px solid var(--color-surface-border)' }}>
           <canvas
             ref={canvasRef}
             width={580}
             height={420}
-            style={{ width: '100%', height: 'auto', display: 'block', backgroundColor: '#0E1117' }}
+            style={{ width: '100%', height: 'auto', maxWidth: '580px', display: 'block', backgroundColor: '#0E1117', touchAction: 'none' }}
             aria-label="Tactical coordinate map showing Lunar Module Falcon at center, Hadley Rille canyon to the west, Mons Hadley Delta to the south, and the current rover heading."
           />
 
@@ -299,7 +319,7 @@ export default function LunarRoverSim() {
             <button
               onClick={resetToFalcon}
               className="badge-tag"
-              style={{ background: 'rgba(20, 24, 32, 0.85)', cursor: 'pointer', border: '1px solid var(--color-surface-border)' }}
+              style={{ background: 'rgba(20, 24, 32, 0.85)', cursor: 'pointer', border: '1px solid var(--color-surface-border)', minHeight: '44px', minWidth: '44px' }}
             >
               ⟲ Return to Falcon
             </button>
@@ -436,17 +456,20 @@ export default function LunarRoverSim() {
         }}
       >
         {/* On-Screen Steering Joystick Buttons */}
-        <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '6px', alignItems: 'center', flexWrap: 'wrap' }}>
           <button
             onClick={() => driveRover(0, -15)}
             aria-label="Steer rover left 15 degrees"
             style={{
               padding: '10px 14px',
+              minHeight: '44px',
+              minWidth: '44px',
               backgroundColor: 'var(--color-surface-elevated)',
               border: '1px solid var(--color-surface-border)',
               borderRadius: 'var(--radius-sm)',
               color: 'var(--color-regolith-white)',
-              fontSize: '0.875rem'
+              fontSize: '0.875rem',
+              cursor: 'pointer'
             }}
           >
             ◀ Turn Left
@@ -457,11 +480,15 @@ export default function LunarRoverSim() {
             aria-label="Drive rover forward 200 meters"
             style={{
               padding: '10px 18px',
+              minHeight: '44px',
+              minWidth: '44px',
               backgroundColor: 'var(--color-lunar-amber)',
               borderRadius: 'var(--radius-sm)',
               color: '#0B0D11',
               fontWeight: 600,
-              fontSize: '0.875rem'
+              fontSize: '0.875rem',
+              cursor: 'pointer',
+              border: 'none'
             }}
           >
             ▲ Drive Forward
@@ -472,11 +499,14 @@ export default function LunarRoverSim() {
             aria-label="Steer rover right 15 degrees"
             style={{
               padding: '10px 14px',
+              minHeight: '44px',
+              minWidth: '44px',
               backgroundColor: 'var(--color-surface-elevated)',
               border: '1px solid var(--color-surface-border)',
               borderRadius: 'var(--radius-sm)',
               color: 'var(--color-regolith-white)',
-              fontSize: '0.875rem'
+              fontSize: '0.875rem',
+              cursor: 'pointer'
             }}
           >
             Turn Right ▶
@@ -487,11 +517,14 @@ export default function LunarRoverSim() {
             aria-label="Reverse rover backward 100 meters"
             style={{
               padding: '10px 14px',
+              minHeight: '44px',
+              minWidth: '44px',
               backgroundColor: 'var(--color-surface-elevated)',
               border: '1px solid var(--color-surface-border)',
               borderRadius: 'var(--radius-sm)',
               color: 'var(--color-regolith-white)',
-              fontSize: '0.875rem'
+              fontSize: '0.875rem',
+              cursor: 'pointer'
             }}
           >
             ▼ Reverse
@@ -499,19 +532,21 @@ export default function LunarRoverSim() {
         </div>
 
         {/* Step Traversal Buttons (Accessibility & Reduced Motion) */}
-        <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
           <span style={{ fontSize: '0.75rem', color: 'var(--color-telemetry-silver)' }}>STEP ADVANCE:</span>
           <button
             onClick={() => stepDrive(1.0)}
+            aria-label="Step rover forward 1 kilometre"
             className="badge-tag"
-            style={{ cursor: 'pointer', background: 'var(--color-surface-elevated)' }}
+            style={{ cursor: 'pointer', background: 'var(--color-surface-elevated)', minHeight: '44px', minWidth: '44px' }}
           >
             +1.0 km
           </button>
           <button
             onClick={() => stepDrive(5.0)}
+            aria-label="Step rover forward 5 kilometres"
             className="badge-tag"
-            style={{ cursor: 'pointer', background: 'var(--color-surface-elevated)' }}
+            style={{ cursor: 'pointer', background: 'var(--color-surface-elevated)', minHeight: '44px', minWidth: '44px' }}
           >
             +5.0 km
           </button>

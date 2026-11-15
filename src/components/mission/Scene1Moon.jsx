@@ -488,8 +488,9 @@ const STORY_BEATS = [
     fullText: "Over three days, Dave Scott and Jim Irwin traversed 27.9 kilometers across Hadley Rille, finding the 4-billion-year-old Genesis Rock."
   },
   {
-    phase: "05 // STATION 9A · SILENT MONUMENT",
-    fullText: "When their mission ended, they parked LRV-001 at Station 9A. It still rests in the silent vacuum of Hadley."
+    // TODO: Verify Station 9A designation against NSSDCA record 1971-063C
+    phase: "05 // HADLEY-APENNINE · SILENT MONUMENT",
+    fullText: "When their mission ended, they parked LRV-001 east of the lander. It still rests in the silent vacuum of Hadley."
   }
 ];
 
@@ -591,7 +592,7 @@ export default function Scene1Moon() {
             <Canvas
               camera={{ position: [0, 7.5, 12], fov: 45 }}
               gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
-              dpr={[1, 1.5]}
+              dpr={[1, Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5)]}
             >
               <MoonScene scrollProgress={scrollProgress} />
             </Canvas>
@@ -603,12 +604,26 @@ export default function Scene1Moon() {
 
           {/* Telemetry Header HUD */}
           <header className="scene1-moon-hud-header">
-            <div className="scene1-hud-tag">
-              SCENE 01 // APOLLO 15 LRV-001
+            <div>
+              <div className="scene1-hud-tag">
+                SCENE 01 // APOLLO 15 LRV-001
+              </div>
+              <div style={{ fontSize: '0.625rem', fontFamily: 'var(--font-mono)', marginTop: '3px' }}>
+                <span style={{ color: 'var(--color-telemetry-silver)' }}>NSSDCA ID: </span>
+                <a
+                  href="https://nssdc.gsfc.nasa.gov/nmc/spacecraft/display.action?id=1971-063C"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: 'var(--color-lunar-amber)', textDecoration: 'underline' }}
+                >
+                  1971-063C ↗
+                </a>
+              </div>
             </div>
             <div className="scene1-hud-meta">
-              <div>STATION 9A · HADLEY-APENNINE</div>
-              <div style={{ color: 'var(--color-lunar-amber, #E89020)' }}>26.1317° N, 3.6380° E</div>
+              {/* TODO: Verify Station 9A designation and exact parking coordinates against NSSDCA record 1971-063C */}
+              <div>HADLEY-APENNINE · MARE IMBRIUM</div>
+              <div style={{ color: 'var(--color-lunar-amber, #E89020)' }}>COORDINATES PENDING NSSDCA VERIFICATION</div>
               <div>DISTANCE: 384,400 KM · VACUUM</div>
             </div>
           </header>
@@ -625,7 +640,8 @@ export default function Scene1Moon() {
             >
               <span className="scene1-story-phase">{activeBeat.phase}</span>
               <p className="scene1-story-text">
-                {displayedText}
+                <span aria-hidden="true">{displayedText}</span>
+                <span className="visually-hidden">{activeBeat.fullText}</span>
                 <span className="scene1-typewriter-cursor" aria-hidden="true" />
               </p>
             </div>

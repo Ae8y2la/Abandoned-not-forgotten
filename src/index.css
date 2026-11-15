@@ -11,6 +11,7 @@
   background-color: var(--color-space-black);
   position: relative;
   isolation: isolate;         /* new stacking context keeps z-index clean */
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .site-container {
@@ -24,4 +25,58 @@
   .site-container {
     padding: 0 var(--space-xl);
   }
+}
+
+/* Skip Link — accessibility */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 16px;
+  padding: 8px 16px;
+  background: var(--color-lunar-amber);
+  color: #000;
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  z-index: 100000;
+  text-decoration: none;
+}
+.skip-link:focus {
+  left: 16px;
+}
+
+/* Custom Astronaut Cursor — class-based (toggled by JS on html element) */
+html.cursor-astronaut-active,
+html.cursor-astronaut-active body,
+html.cursor-astronaut-active button,
+html.cursor-astronaut-active a,
+html.cursor-astronaut-active [role="button"],
+html.cursor-astronaut-active select,
+html.cursor-astronaut-active .world-card,
+html.cursor-astronaut-active .planet-hop-item,
+html.cursor-astronaut-active .scroll-progress-button,
+html.cursor-astronaut-active * { cursor: none !important; }
+html.cursor-astronaut-active input,
+html.cursor-astronaut-active textarea,
+html.cursor-astronaut-active [contenteditable="true"] { cursor: auto !important; }
+
+@media (pointer: coarse) {
+  html,
+  body,
+  * {
+    cursor: auto !important;
+  }
+}
+
+/* Responsive display utilities */
+@media (max-width: 767px) {
+  .hide-mobile { display: none !important; }
+  .signal-rotating-moon {
+    opacity: 0.22 !important;
+    right: -40px !important;
+    top: 40% !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .show-mobile-only { display: none !important; }
 }

@@ -348,7 +348,7 @@ export default function Scene3Voyager({ onExploreAgain, onOpenSources }) {
             <Canvas
               camera={{ position: [0, 0.8, 6.8], fov: 45 }}
               gl={{ antialias: true, alpha: false, powerPreference: 'high-performance' }}
-              dpr={[1, 1.5]}
+              dpr={[1, Math.min(typeof window !== 'undefined' ? window.devicePixelRatio : 1, 1.5)]}
             >
               <VoyagerScene scrollProgress={scrollProgress} />
             </Canvas>
@@ -389,7 +389,8 @@ export default function Scene3Voyager({ onExploreAgain, onOpenSources }) {
               >
                 <span className="scene3-story-phase">{activeBeat.phase}</span>
                 <p className="scene3-story-text">
-                  {displayedText}
+                  <span aria-hidden="true">{displayedText}</span>
+                  <span className="visually-hidden">{activeBeat.fullText}</span>
                   <span className="scene3-typewriter-cursor" aria-hidden="true" />
                 </p>
               </div>
@@ -507,7 +508,7 @@ export default function Scene3Voyager({ onExploreAgain, onOpenSources }) {
                   01 // Apollo 15 LRV-001
                 </h4>
                 <p style={{ fontSize: '0.8125rem', lineHeight: 1.6, color: 'var(--color-telemetry-silver)' }}>
-                  Primary Sources: NASA Technical Note TN D-7469 (Lunar Roving Vehicle Navigation System Performance), Apollo 15 Flight Evaluation Report MSC-05161. LROC Station 9A Coordinates: 26.13174°N, 3.63803°E.
+                  Primary Sources: NASA Technical Note TN D-7469 (Lunar Roving Vehicle Navigation System Performance), Apollo 15 Flight Evaluation Report MSC-05161, NSSDCA ID 1971-063C. Location: Hadley-Apennine region (parking coordinates pending verification against NSSDCA 1971-063C).
                 </p>
               </div>
 
@@ -527,7 +528,7 @@ export default function Scene3Voyager({ onExploreAgain, onOpenSources }) {
                   03 // Voyager 1 Interstellar
                 </h4>
                 <p style={{ fontSize: '0.8125rem', lineHeight: 1.6, color: 'var(--color-telemetry-silver)' }}>
-                  Primary Sources: NASA JPL Deep Space Network Telecommunications, Voyager Interstellar Mission (VIM). Distance: 25.902 Billion km (~173.1 AU). Heliopause crossing verified on 25 August 2012.
+                  Primary Sources: NASA JPL Deep Space Network Telecommunications, Voyager Interstellar Mission (VIM). Distance: ~25.9 billion km (~173 AU). One-way radio delay: ~24 hours. Heliopause crossing verified on 25 August 2012.
                 </p>
               </div>
             </div>

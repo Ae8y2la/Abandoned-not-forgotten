@@ -260,10 +260,11 @@
   border: 1px solid rgba(168, 179, 194, 0.25);
   color: var(--color-telemetry-silver, #A8B3C2);
   font-family: var(--font-mono, 'Space Grotesk', monospace);
-  font-size: 0.75rem;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  padding: 8px 16px;
+  padding: 12px 20px;
+  min-height: 44px;
   border-radius: 4px;
   cursor: pointer;
   transition: all 200ms ease;
@@ -286,4 +287,44 @@
 .intro-btn--active {
   border-color: rgba(232, 144, 32, 0.5);
   color: var(--color-amber-bright, #F59E0B);
+}
+
+.intro-btn--skip {
+  border-color: var(--color-lunar-amber, #E89020);
+  color: #FFFFFF;
+  background: rgba(232, 144, 32, 0.15);
+  font-weight: 700;
+  box-shadow: 0 0 14px rgba(232, 144, 32, 0.25);
+}
+
+.intro-btn--skip:hover {
+  background: var(--color-lunar-amber, #E89020);
+  color: #05070A;
+}
+
+/* Landscape / short-height screens: prevent overflow & overlap */
+@media (max-height: 540px) and (orientation: landscape) {
+  .intro-line-text {
+    font-size: clamp(1rem, 3vw, 1.4rem);
+    line-height: 1.3;
+  }
+  .intro-countdown-num {
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+  }
+  .intro-liftoff-title {
+    font-size: clamp(2rem, 6vw, 3.5rem);
+  }
+  .intro-step {
+    padding: 0 1rem;
+  }
+  .intro-control-bar {
+    bottom: 8px;
+    left: 1rem;
+    right: 1rem;
+  }
+  .intro-btn {
+    padding: 6px 14px;
+    min-height: 36px;
+    font-size: 0.7rem;
+  }
 }

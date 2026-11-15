@@ -9,12 +9,13 @@ export default function Footer({ onOpenSources, onReplayIntro }) {
       style={{
         backgroundColor: 'var(--color-surface-charcoal)',
         borderTop: '1px solid var(--color-surface-border-subtle)',
-        padding: 'var(--space-2xl) 0 var(--space-xl)',
-        marginTop: 'var(--space-3xl)'
+        padding: 'var(--space-2xl) 0 calc(var(--space-2xl) + 70px + env(safe-area-inset-bottom, 0px))',
+        marginTop: 'var(--space-3xl)',
+        scrollMarginTop: '60px'
       }}
     >
       <div className="site-container">
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 'var(--space-xl)', marginBottom: 'var(--space-xl)' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(280px, 100%), 1fr))', gap: 'var(--space-xl)', marginBottom: 'var(--space-xl)' }}>
           
           {/* Mission Scope & Intent */}
           <div>
@@ -31,7 +32,7 @@ export default function Footer({ onOpenSources, onReplayIntro }) {
             <h4 style={{ fontSize: '0.875rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--color-amber-bright)', marginBottom: 'var(--space-xs)' }}>
               NASA Educational Project Disclaimer
             </h4>
-            <p className="text-body" style={{ fontSize: '0.8125rem', lineHeight: 1.6, color: 'var(--color-telemetry-silver)' }}>
+            <p className="text-body" style={{ fontSize: '0.875rem', lineHeight: 1.6, color: 'var(--color-telemetry-silver)' }}>
               {references.disclaimer.text}
             </p>
           </div>
@@ -41,14 +42,15 @@ export default function Footer({ onOpenSources, onReplayIntro }) {
             <h4 style={{ fontSize: '0.875rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--color-regolith-white)', marginBottom: 'var(--space-xs)' }}>
               Verified Provenance
             </h4>
-            <p className="text-body" style={{ fontSize: '0.8125rem', lineHeight: 1.6, color: 'var(--color-telemetry-silver)', marginBottom: 'var(--space-sm)' }}>
+            <p className="text-body" style={{ fontSize: '0.875rem', lineHeight: 1.6, color: 'var(--color-telemetry-silver)', marginBottom: 'var(--space-sm)' }}>
               All scientific data, mission timelines, and coordinates are audited against primary NASA Technical Reports, Apollo flight logs, and LROC orbital imagery.
             </p>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <button
                 onClick={onOpenSources}
                 className="badge-tag badge-tag--amber"
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', minHeight: '44px', minWidth: '44px', padding: '8px 14px' }}
+                aria-label="Open NASA primary sources dossier"
               >
                 View Primary Sources & Dossier ↗
               </button>
@@ -56,7 +58,7 @@ export default function Footer({ onOpenSources, onReplayIntro }) {
                 <button
                   onClick={onReplayIntro}
                   className="badge-tag"
-                  style={{ cursor: 'pointer', borderColor: 'var(--color-surface-border)' }}
+                  style={{ cursor: 'pointer', borderColor: 'var(--color-surface-border)', minHeight: '44px', minWidth: '44px', padding: '8px 14px' }}
                   aria-label="Replay the 20-second cinematic intro sequence"
                 >
                   Replay Cinematic Prologue ↺
@@ -77,8 +79,8 @@ export default function Footer({ onOpenSources, onReplayIntro }) {
             justifyContent: 'space-between',
             alignItems: 'center',
             gap: 'var(--space-sm)',
-            fontSize: '0.75rem',
-            color: 'var(--color-muted-slate)'
+            fontSize: '0.8125rem',
+            color: 'var(--color-telemetry-silver)'
           }}
         >
           <div>

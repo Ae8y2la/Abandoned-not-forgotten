@@ -3,9 +3,9 @@ import PlanetIcon from './PlanetIcon.jsx';
 import './Navigation.css';
 
 const NAV_ITEMS = [
-  { id: 'moon', label: 'Moon', planet: 'moon', missionId: 'apollo-15-lrv' },
-  { id: 'mars', label: 'Mars', planet: 'mars', missionId: 'opportunity-mer' },
-  { id: 'voyager', label: 'Voyager', planet: 'voyager', missionId: 'voyager-1' },
+  { id: 'moon', label: 'Moon', planet: 'moon', missionId: 'apollo-15-lrv', ariaLabel: 'Navigate to Moon — Apollo 15 LRV mission' },
+  { id: 'mars', label: 'Mars', planet: 'mars', missionId: 'opportunity-mer', ariaLabel: 'Navigate to Mars — Opportunity MER mission' },
+  { id: 'voyager', label: 'Voyager', planet: 'voyager', missionId: 'voyager-1', ariaLabel: 'Navigate to Voyager — Voyager 1 mission' },
 ];
 
 export default function Navigation({ activeMissionId, onSelectMission, onOpenSources, onReplayIntro }) {
@@ -22,9 +22,19 @@ export default function Navigation({ activeMissionId, onSelectMission, onOpenSou
     updateVisibility();
     motionQuery.addEventListener?.('change', updateMotion);
     document.addEventListener('visibilitychange', updateVisibility);
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape') {
+        setPressedId(null);
+        setHoveredId(null);
+      }
+    };
+    document.addEventListener('keydown', handleKeyDown);
+
     return () => {
       motionQuery.removeEventListener?.('change', updateMotion);
       document.removeEventListener('visibilitychange', updateVisibility);
+      document.removeEventListener('keydown', handleKeyDown);
     };
   }, []);
 
@@ -56,7 +66,7 @@ export default function Navigation({ activeMissionId, onSelectMission, onOpenSou
   };
 
   return (
-    <nav className="planet-hop-nav" aria-label="Planet Hop navigation">
+    <nav className="planet-hop-nav" role="navigation" aria-label="Planet destinations">
       <button
         type="button"
         className="planet-hop-brand"
@@ -82,7 +92,7 @@ export default function Navigation({ activeMissionId, onSelectMission, onOpenSou
               onClick={() => handleItemClick(item)}
               onMouseEnter={() => setHoveredId(item.id)}
               onMouseLeave={() => setHoveredId(null)}
-              aria-label={`Go to ${item.label}`}
+              aria-label={item.ariaLabel}
               aria-current={isActive ? 'page' : undefined}
             >
               <PlanetIcon
@@ -98,11 +108,11 @@ export default function Navigation({ activeMissionId, onSelectMission, onOpenSou
       </div>
 
       <div className="planet-hop-utilities">
-        <button type="button" className="planet-hop-utility" onClick={onOpenSources}>
+        <button type="button" className="planet-hop-utility" onClick={onOpenSources} aria-label="View mission sources and references">
           Sources
         </button>
         {onReplayIntro && (
-          <button type="button" className="planet-hop-utility" onClick={onReplayIntro}>
+          <button type="button" className="planet-hop-utility" onClick={onReplayIntro} aria-label="Replay the mission prologue introduction">
             Prologue
           </button>
         )}
