@@ -257,10 +257,11 @@ const VOYAGER_STORY_BEATS = [
 
 export default function Scene3Voyager({ onExploreAgain, onOpenSources }) {
   const trackRef = useRef(null);
+  const stageRef = useRef(null);
   const scrollProgress = useRef(0);
 
   const [activeBeatIndex, setActiveBeatIndex] = useState(0);
-  const [displayedText, setDisplayedText] = useState('');
+  const [displayedText, setDisplayedText] = useState(VOYAGER_STORY_BEATS[0].fullText);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [showPaleDot, setShowPaleDot] = useState(false);
 
@@ -272,6 +273,8 @@ export default function Scene3Voyager({ onExploreAgain, onOpenSources }) {
 
     const st = ScrollTrigger.create({
       trigger: track,
+      pin: stageRef.current,
+      pinSpacing: false,
       start: 'top top',
       end: 'bottom bottom',
       scrub: 1,
@@ -289,9 +292,9 @@ export default function Scene3Voyager({ onExploreAgain, onOpenSources }) {
         let index = -1;
         let beatProgress = 0;
 
-        if (p >= 0.05 && p < 0.22) {
+        if (p >= 0.00 && p < 0.22) {
           index = 0;
-          beatProgress = (p - 0.05) / 0.17;
+          beatProgress = p / 0.22;
         } else if (p >= 0.24 && p < 0.42) {
           index = 1;
           beatProgress = (p - 0.24) / 0.18;
@@ -315,11 +318,14 @@ export default function Scene3Voyager({ onExploreAgain, onOpenSources }) {
             setDisplayedText(full);
             setIsFadingOut(false);
           } else {
-            if (beatProgress < 0.75) {
-              const charCount = Math.floor((beatProgress / 0.75) * full.length);
+            if (index === 0 && p < 0.08) {
+              setDisplayedText(full);
+              setIsFadingOut(false);
+            } else if (beatProgress < 0.35) {
+              const charCount = Math.floor((beatProgress / 0.35) * full.length);
               setDisplayedText(full.slice(0, charCount));
               setIsFadingOut(false);
-            } else if (beatProgress >= 0.75 && beatProgress < 0.90) {
+            } else if (beatProgress >= 0.35 && beatProgress < 0.92) {
               setDisplayedText(full);
               setIsFadingOut(false);
             } else {
@@ -330,8 +336,19 @@ export default function Scene3Voyager({ onExploreAgain, onOpenSources }) {
       }
     });
 
+    // Recalculate on load and resize so the sticky pin stays correct on all viewport sizes
+    const handleRefresh = () => {
+      ScrollTrigger.refresh();
+    };
+    window.addEventListener('resize', handleRefresh, { passive: true });
+    window.addEventListener('load', handleRefresh, { passive: true });
+    const timer = setTimeout(handleRefresh, 250);
+
     return () => {
+      clearTimeout(timer);
       st.kill();
+      window.removeEventListener('resize', handleRefresh);
+      window.removeEventListener('load', handleRefresh);
     };
   }, []);
 
@@ -342,7 +359,7 @@ export default function Scene3Voyager({ onExploreAgain, onOpenSources }) {
       <div ref={trackRef} className="scene3-voyager-track">
         
         {/* Sticky Pinned Stage */}
-        <div className="scene3-voyager-stage">
+        <div ref={stageRef} className="scene3-voyager-stage">
           {/* 3D WebGL Canvas */}
           <div className="scene3-voyager-canvas-wrap">
             <Canvas

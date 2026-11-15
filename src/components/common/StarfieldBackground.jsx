@@ -267,11 +267,15 @@ export default function StarfieldBackground() {
     <div
       style={{
         position:      'fixed',
+        top:           0,
+        left:          0,
+        right:         0,
+        bottom:        0,
         inset:         0,
         zIndex:        0,
         pointerEvents: 'none',
-        width:         '100vw',
-        height:        '100vh',
+        width:         '100%',
+        height:        '100%',
       }}
       aria-hidden="true"
     >

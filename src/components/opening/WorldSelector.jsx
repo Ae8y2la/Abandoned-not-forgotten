@@ -130,7 +130,16 @@ export default function WorldSelector({ onSelectMission }) {
       ref={selectorRef}
       id="choose-your-world"
       aria-labelledby="world-selector-heading" 
-      style={{ padding: 'var(--space-2xl) 0 var(--space-3xl)', scrollMarginTop: '80px' }}
+      style={{
+        minHeight: '100vh',
+        minHeight: '100svh',
+        minHeight: '100dvh',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: 'var(--space-2xl) 0 var(--space-3xl)',
+        scrollMarginTop: '80px'
+      }}
     >
       <div className="site-container">
         

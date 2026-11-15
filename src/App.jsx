@@ -185,12 +185,10 @@ export default function App() {
         {viewMode === 'home' && (
           <>
             <SignalScene onEnter={handleEnterMission} />
-            <div>
-              <WorldSelector
-                missions={missions}
-                onSelectMission={handleSelectMission}
-              />
-            </div>
+            <WorldSelector
+              missions={missions}
+              onSelectMission={handleSelectMission}
+            />
           </>
         )}
 

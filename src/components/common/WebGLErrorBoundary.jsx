@@ -16,8 +16,10 @@ function WebGLFallback({ missionName, gradientColors, storyText }) {
       aria-label={`${missionName ?? 'Mission'} scene — static fallback (WebGL unavailable)`}
       style={{
         width: '100%',
-        height: '60vh',
-        minHeight: '340px',
+        height: '100vh',
+        height: '100svh',
+        height: '100dvh',
+        minHeight: '100svh',
         background: `radial-gradient(ellipse at 50% 60%, ${from} 0%, ${to} 100%)`,
         display: 'flex',
         flexDirection: 'column',

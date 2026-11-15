@@ -497,11 +497,12 @@ const STORY_BEATS = [
 export default function Scene1Moon() {
   const containerRef = useRef(null);
   const trackRef = useRef(null);
+  const stageRef = useRef(null);
   const scrollProgress = useRef(0);
 
-  // Typewriter state
+  // Typewriter state — initialize with full sentence so it's never stuck blank or mid-word
   const [activeBeatIndex, setActiveBeatIndex] = useState(0);
-  const [displayedText, setDisplayedText] = useState('');
+  const [displayedText, setDisplayedText] = useState(STORY_BEATS[0].fullText);
   const [isFadingOut, setIsFadingOut] = useState(false);
 
   useEffect(() => {
@@ -512,25 +513,27 @@ export default function Scene1Moon() {
 
     const st = ScrollTrigger.create({
       trigger: track,
+      pin: stageRef.current,
+      pinSpacing: false,
       start: 'top top',
       end: 'bottom bottom',
       scrub: 1,
       onUpdate: (self) => {
         scrollProgress.current = self.progress;
 
-        // Map scroll progress to sequential story beats:
-        // Beat 0: 0.05 - 0.22
-        // Beat 1: 0.24 - 0.42
-        // Beat 2: 0.44 - 0.62
-        // Beat 3: 0.64 - 0.82
+        // Map scroll progress to sequential story beats.
+        // Beat 0: 0.00 - 0.23
+        // Beat 1: 0.24 - 0.43
+        // Beat 2: 0.44 - 0.63
+        // Beat 3: 0.64 - 0.83
         // Beat 4: 0.84 - 1.00
         const p = self.progress;
         let index = -1;
         let beatProgress = 0;
 
-        if (p >= 0.04 && p < 0.23) {
+        if (p >= 0.00 && p < 0.23) {
           index = 0;
-          beatProgress = (p - 0.04) / 0.19;
+          beatProgress = p / 0.23;
         } else if (p >= 0.24 && p < 0.43) {
           index = 1;
           beatProgress = (p - 0.24) / 0.19;
@@ -546,7 +549,7 @@ export default function Scene1Moon() {
         }
 
         if (index === -1) {
-          // In-between gap: clean empty black void, previous line faded out completely!
+          // Narrow gap between beats — brief fade
           setIsFadingOut(true);
         } else {
           setActiveBeatIndex(index);
@@ -556,16 +559,21 @@ export default function Scene1Moon() {
             setDisplayedText(full);
             setIsFadingOut(false);
           } else {
-            // Typewriter character reveal across the first 65% of the beat, then hold, then fade
-            if (beatProgress < 0.75) {
-              const charCount = Math.floor((beatProgress / 0.75) * full.length);
+            // For beat 0 at the start of page, show full text immediately so it is never stuck on "...foo"
+            if (index === 0 && p < 0.08) {
+              setDisplayedText(full);
+              setIsFadingOut(false);
+            } else if (beatProgress < 0.35) {
+              // Rapid typewriter reveal within first 35% of the beat
+              const charCount = Math.max(1, Math.floor((beatProgress / 0.35) * full.length));
               setDisplayedText(full.slice(0, charCount));
               setIsFadingOut(false);
-            } else if (beatProgress >= 0.75 && beatProgress < 0.90) {
+            } else if (beatProgress >= 0.35 && beatProgress < 0.92) {
+              // Hold the complete sentence so the reader can comfortably read it
               setDisplayedText(full);
               setIsFadingOut(false);
             } else {
-              // Fade out before next line appears
+              // Fade out before next beat
               setIsFadingOut(true);
             }
           }
@@ -573,8 +581,19 @@ export default function Scene1Moon() {
       }
     });
 
+    // Recalculate on load and resize so the pin and canvas remain 100% accurate across screen sizes
+    const handleRefresh = () => {
+      ScrollTrigger.refresh();
+    };
+    window.addEventListener('resize', handleRefresh, { passive: true });
+    window.addEventListener('load', handleRefresh, { passive: true });
+    const timer = setTimeout(handleRefresh, 250);
+
     return () => {
+      clearTimeout(timer);
       st.kill();
+      window.removeEventListener('resize', handleRefresh);
+      window.removeEventListener('load', handleRefresh);
     };
   }, []);
 
@@ -586,7 +605,7 @@ export default function Scene1Moon() {
       <div ref={trackRef} className="scene1-moon-track">
         
         {/* Sticky Pinned Stage */}
-        <div className="scene1-moon-stage">
+        <div ref={stageRef} className="scene1-moon-stage">
           {/* 3D WebGL Canvas */}
           <div className="scene1-moon-canvas-wrap">
             <Canvas

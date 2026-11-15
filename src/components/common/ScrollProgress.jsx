@@ -18,10 +18,10 @@ export default function ScrollProgress({ activeMissionId, onSelectMission }) {
   const containerRef = useRef(null);
 
   useEffect(() => {
+    let triggers = [];
+
     // Small delay to allow react rendering of newly selected views/routes
     const timer = setTimeout(() => {
-      const triggers = [];
-
       // Global document progress indicator
       const globalST = ScrollTrigger.create({
         start: 0,
@@ -52,14 +52,17 @@ export default function ScrollProgress({ activeMissionId, onSelectMission }) {
         });
         triggers.push(st);
       });
-
-      return () => {
-        triggers.forEach((st) => st.kill());
-      };
     }, 150);
+
+    const handleResize = () => {
+      ScrollTrigger.refresh();
+    };
+    window.addEventListener('resize', handleResize, { passive: true });
 
     return () => {
       clearTimeout(timer);
+      triggers.forEach((st) => st.kill());
+      window.removeEventListener('resize', handleResize);
     };
   }, [activeMissionId]);
 

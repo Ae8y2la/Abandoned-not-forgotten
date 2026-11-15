@@ -435,10 +435,11 @@ const MARS_STORY_BEATS = [
 
 export default function Scene2Mars() {
   const trackRef = useRef(null);
+  const stageRef = useRef(null);
   const scrollProgress = useRef(0);
 
   const [activeBeatIndex, setActiveBeatIndex] = useState(0);
-  const [displayedText, setDisplayedText] = useState('');
+  const [displayedText, setDisplayedText] = useState(MARS_STORY_BEATS[0].fullText);
   const [isFadingOut, setIsFadingOut] = useState(false);
   const [powerPercent, setPowerPercent] = useState(100);
 
@@ -450,6 +451,8 @@ export default function Scene2Mars() {
 
     const st = ScrollTrigger.create({
       trigger: track,
+      pin: stageRef.current,
+      pinSpacing: false,
       start: 'top top',
       end: 'bottom bottom',
       scrub: 1,
@@ -465,9 +468,9 @@ export default function Scene2Mars() {
         let index = -1;
         let beatProgress = 0;
 
-        if (p >= 0.04 && p < 0.22) {
+        if (p >= 0.00 && p < 0.22) {
           index = 0;
-          beatProgress = (p - 0.04) / 0.18;
+          beatProgress = p / 0.22;
         } else if (p >= 0.23 && p < 0.41) {
           index = 1;
           beatProgress = (p - 0.23) / 0.18;
@@ -495,11 +498,14 @@ export default function Scene2Mars() {
             setDisplayedText(full);
             setIsFadingOut(false);
           } else {
-            if (beatProgress < 0.75) {
-              const charCount = Math.floor((beatProgress / 0.75) * full.length);
+            if (index === 0 && p < 0.08) {
+              setDisplayedText(full);
+              setIsFadingOut(false);
+            } else if (beatProgress < 0.35) {
+              const charCount = Math.max(1, Math.floor((beatProgress / 0.35) * full.length));
               setDisplayedText(full.slice(0, charCount));
               setIsFadingOut(false);
-            } else if (beatProgress >= 0.75 && beatProgress < 0.90) {
+            } else if (beatProgress >= 0.35 && beatProgress < 0.92) {
               setDisplayedText(full);
               setIsFadingOut(false);
             } else {
@@ -510,8 +516,19 @@ export default function Scene2Mars() {
       }
     });
 
+    // Recalculate on load and resize so the sticky pin stays correct on all viewport sizes
+    const handleRefresh = () => {
+      ScrollTrigger.refresh();
+    };
+    window.addEventListener('resize', handleRefresh, { passive: true });
+    window.addEventListener('load', handleRefresh, { passive: true });
+    const timer = setTimeout(handleRefresh, 250);
+
     return () => {
+      clearTimeout(timer);
       st.kill();
+      window.removeEventListener('resize', handleRefresh);
+      window.removeEventListener('load', handleRefresh);
     };
   }, []);
 
@@ -522,7 +539,7 @@ export default function Scene2Mars() {
       <div ref={trackRef} className="scene2-mars-track">
         
         {/* Sticky Pinned Stage */}
-        <div className="scene2-mars-stage">
+        <div ref={stageRef} className="scene2-mars-stage">
           {/* 3D WebGL Canvas */}
           <div className="scene2-mars-canvas-wrap">
             <Canvas

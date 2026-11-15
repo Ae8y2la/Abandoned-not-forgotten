@@ -235,7 +235,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
           gradientColors={['#3a3f4a', '#0B0D11']}
           storyText="LRV-001 rests at Hadley-Apennine, Mare Imbrium — the first car ever driven on another world, 27.9 km across grey basaltic regolith under a black lunar sky."
         >
-          <React.Suspense fallback={<div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-muted-slate)', fontFamily: 'var(--font-mono, monospace)', fontSize: '0.8125rem', letterSpacing: '0.15em' }}>LOADING 3D ARCHIVE...</div>}>
+          <React.Suspense fallback={<div style={{ minHeight: '100svh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-muted-slate)', fontFamily: 'var(--font-mono, monospace)', fontSize: '0.8125rem', letterSpacing: '0.15em' }}>LOADING 3D ARCHIVE...</div>}>
             <Scene1Moon />
           </React.Suspense>
         </WebGLErrorBoundary>
@@ -248,7 +248,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
           gradientColors={['#8B3a2a', '#1a0e0b']}
           storyText="Opportunity rests in Perseverance Valley, Endeavour Crater — after 5,111 sols and 45.16 km, her solar panels silenced by a global dust storm on 10 June 2018."
         >
-          <React.Suspense fallback={<div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-muted-slate)', fontFamily: 'var(--font-mono, monospace)', fontSize: '0.8125rem', letterSpacing: '0.15em' }}>LOADING 3D ARCHIVE...</div>}>
+          <React.Suspense fallback={<div style={{ minHeight: '100svh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-muted-slate)', fontFamily: 'var(--font-mono, monospace)', fontSize: '0.8125rem', letterSpacing: '0.15em' }}>LOADING 3D ARCHIVE...</div>}>
             <Scene2Mars />
           </React.Suspense>
         </WebGLErrorBoundary>
@@ -261,7 +261,7 @@ export default function MissionLayout({ mission, onBackToSelector, onOpenSources
           gradientColors={['#0a0a1a', '#050508']}
           storyText="Voyager 1 drifts ~25.9 billion km from Earth — in interstellar space beyond the heliosphere — still transmitting at 160 bits per second, 47 years after launch."
         >
-          <React.Suspense fallback={<div style={{ minHeight: '60vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-muted-slate)', fontFamily: 'var(--font-mono, monospace)', fontSize: '0.8125rem', letterSpacing: '0.15em' }}>LOADING 3D ARCHIVE...</div>}>
+          <React.Suspense fallback={<div style={{ minHeight: '100svh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--color-muted-slate)', fontFamily: 'var(--font-mono, monospace)', fontSize: '0.8125rem', letterSpacing: '0.15em' }}>LOADING 3D ARCHIVE...</div>}>
             <Scene3Voyager
               onExploreAgain={onBackToSelector}
               onOpenSources={onOpenSources}

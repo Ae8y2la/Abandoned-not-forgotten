@@ -191,8 +191,9 @@ export default function SignalScene({ onEnter }) {
       id="signal-scene"
       aria-label="The Signal: Mission Introduction"
       style={{
-        minHeight: '92vh',
-        minHeight: '92dvh',
+        minHeight: '100vh',
+        minHeight: '100svh',
+        minHeight: '100dvh',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',

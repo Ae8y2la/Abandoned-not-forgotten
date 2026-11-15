@@ -7,16 +7,21 @@
 .scene3-voyager-root {
   position: relative;
   width: 100%;
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
   background-color: #030508;
   color: #F4F6F8;
   overflow: visible;
 }
 
-/* Scroll track for GSAP pinning (400vh gives slow, awe-inspiring depth) */
+/* Scroll track for GSAP pinning (400svh keeps track in sync with the sticky stage on mobile) */
 .scene3-voyager-track {
   position: relative;
   width: 100%;
   height: 400vh;
+  height: 400svh;
+  height: 400dvh;
 }
 
 /* Pinned Fullscreen Stage */
@@ -26,7 +31,11 @@
   left: 0;
   width: 100%;
   height: 100vh;
+  height: 100svh;
   height: 100dvh;
+  min-height: 100vh;
+  min-height: 100svh;
+  min-height: 100dvh;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -37,6 +46,12 @@
 /* 3D WebGL Canvas Layer */
 .scene3-voyager-canvas-wrap {
   position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  height: 100%;
   inset: 0;
   z-index: 1;
   pointer-events: auto;
