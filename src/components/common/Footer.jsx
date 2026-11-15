@@ -23,7 +23,7 @@ export default function Footer({ onOpenSources, onReplayIntro }) {
               THE UNFINISHED MISSION
             </h4>
             <p className="text-body" style={{ fontSize: '0.875rem', lineHeight: 1.6 }}>
-              An interactive educational project for students aged 9–15 exploring NASA hardware left on celestial bodies. Telling the scientific and engineering story of what machines did, how they worked, and what they left behind.
+              An interactive educational project for students aged 8–14 exploring NASA hardware left on celestial bodies. Telling the scientific and engineering story of what machines did, how they worked, and what they left behind.
             </p>
           </div>
 
@@ -40,10 +40,10 @@ export default function Footer({ onOpenSources, onReplayIntro }) {
           {/* Provenance & AI Disclosure */}
           <div>
             <h4 style={{ fontSize: '0.875rem', letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--color-regolith-white)', marginBottom: 'var(--space-xs)' }}>
-              Verified Provenance
+              DATA SOURCES &amp; PROVENANCE
             </h4>
             <p className="text-body" style={{ fontSize: '0.875rem', lineHeight: 1.6, color: 'var(--color-telemetry-silver)', marginBottom: 'var(--space-sm)' }}>
-              All scientific data, mission timelines, and coordinates are audited against primary NASA Technical Reports, Apollo flight logs, and LROC orbital imagery.
+              Mission information is drawn from NASA sources, including the NSSDCA catalog, NASA mission pages, and JPL data, listed in the dossier.
             </p>
             <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
               <button
@@ -84,6 +84,9 @@ export default function Footer({ onOpenSources, onReplayIntro }) {
           }}
         >
           <div>
+            <div style={{ marginBottom: 'var(--space-xs)', color: 'var(--color-regolith-white)' }}>
+              Created by Team The Forgotten Fleet
+            </div>
             NASA Space Apps Challenge 2026 · Challenge: <em>"Abandoned but not Forgotten"</em>
           </div>
           <div>

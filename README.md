@@ -90,7 +90,13 @@ npm run build
 
 ---
 
-## 🔒 Security & Contribution Rules
+## 👩‍🚀 Team
+
+**Team: The Forgotten Fleet · NASA Space Apps Challenge 2026 · Challenge: Abandoned but not Forgotten**
+
+---
+
+## 🔒 Security &amp; Contribution Rules
 
 - **Branching Workflow:** Please create individual feature branches (`feature/your-name`) instead of committing directly to `master`.
 - **Zero Secrets:** Never commit `.env` files, API keys, or private tokens. All environment files are strictly ignored by `.gitignore`.
