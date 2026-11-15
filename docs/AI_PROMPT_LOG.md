@@ -22,6 +22,7 @@
 | 8 | Factual & reference fixes | Audit facts, label unverified items TODO, update `references.js`, add test suite | Google Antigravity | `references.js`, `missions.js`, `tests/lunarRoverNav.test.js`, `vercel.json` |
 | 9 | Deployment prep + Windows build fix | Git/secrets audit, `vercel.json`, remove Windows-only npm bindings | Google Antigravity | `package.json`, `package-lock.json`, `vercel.json` corrected |
 | 10 | Team credit & footer update | Add team name, fix provenance heading and age range, `<meta name="author">` | Google Antigravity | `Footer.jsx`, `index.html`, `README.md` updated |
+| 11 | Viewport gap & sticky pin fix | Eliminate viewport gaps, restore sticky pinning (clip vs hidden), fix typewriter "...foo" truncation | Google Antigravity | `reset.css`, `Scene1Moon`, `Scene2Mars`, `Scene3Voyager`, `SignalScene`, `WorldSelector` |
 
 ---
 
@@ -354,6 +355,48 @@ README.md                          (Team section added; age range already correc
 
 ---
 
+## Stage 11 — Viewport Gap Fix, Sticky Pinning & Typewriter Sentence Completion
+
+### Prompt (full text, 2026-11-15)
+
+```
+The website you built has a gap problem. In the Mission section ("01 // THE HORIZON CONSTRAINT" with the astronaut), the animated scene only fills the top part of the screen, and below it there is a big empty dark space. I think the same gap is happening in the other sections too, especially the Mars and Voyager sections.
+
+Please do this:
+1. Find why the scene/stage is not filling the full screen height in each section, and fix it so every section fills the whole viewport with no empty gap during or after its animation.
+2. Check all 4 sections (Signal, World, Mission, Legacy), not just Mission, and fix the gap everywhere.
+3. Make it responsive on mobile, tablet and desktop. Use svh/dvh instead of plain vh, and make sure the canvas/stage resizes on window resize.
+4. If scroll animations are used, make sure they recalculate (refresh) on load and on resize.
+5. Also, the headline shows "...safely walk on foo". Check if it is a typing animation stuck mid-way or a typo, and fix it so the full sentence shows.
+6. Do not change the design, colors, text or animation style. Only fix layout and sizing.
+7. Run the build, test by scrolling through all sections at mobile and desktop sizes, and then commit the changes so I can push them.
+```
+
+### Files changed (commit `cf934cc`, 2026-11-15)
+
+```
+src/styles/reset.css                           (switched overflow-x: hidden to clip to restore position: sticky)
+src/components/mission/Scene1Moon.css          (100vh / 100svh / 100dvh sizing, 100% canvas wrap)
+src/components/mission/Scene1Moon.jsx          (active ScrollTrigger pinning, resize/load refresh, typewriter fix)
+src/components/mission/Scene2Mars.css          (100vh / 100svh / 100dvh sizing, 100% canvas wrap)
+src/components/mission/Scene2Mars.jsx          (active ScrollTrigger pinning, resize/load refresh, typewriter fix)
+src/components/mission/Scene3Voyager.css       (100vh / 100svh / 100dvh sizing, 100% canvas wrap)
+src/components/mission/Scene3Voyager.jsx       (active ScrollTrigger pinning, resize/load refresh, typewriter fix)
+src/components/opening/SignalScene.jsx         (updated minHeight to 100vh / 100svh / 100dvh)
+src/components/opening/WorldSelector.jsx       (added minHeight: 100vh / 100svh / 100dvh)
+src/components/mission/MissionLayout.jsx       (Suspense fallback minHeight: 100svh)
+src/components/common/WebGLErrorBoundary.jsx   (fallback height: 100vh / 100svh / 100dvh)
+src/components/common/ScrollProgress.jsx       (fixed trigger cleanup & resize listener)
+src/components/common/StarfieldBackground.jsx  (clean 100% fixed inset)
+src/App.jsx                                    (removed unstyled wrapper div around WorldSelector)
+```
+
+### Team corrections afterwards
+- Diagnosed that `overflow-x: hidden` on `html`/`body` was breaking CSS `position: sticky`, stranding the stage at the top of the 400vh track while 300vh of empty dark space scrolled below it. Replaced with `overflow-x: clip` and added direct ScrollTrigger active pinning.
+- Fixed scroll-tied typewriter cutoff where stopping before 75% of beat 0 cut off "foot." at "foo". Initialized text with the full sentence and widened the display threshold.
+
+---
+
 ## Human Review and Corrections
 
 The following problems were found by the team reviewing the site in the browser and issued as correction prompts:
@@ -369,6 +412,8 @@ The following problems were found by the team reviewing the site in the browser 
 | `EBADPLATFORM` for Windows npm binding on Vercel Linux | Vercel build log | `@oxlint/binding-win32-x64-msvc` and `@rolldown/binding-win32-x64-msvc` removed from `devDependencies` |
 | Age range inconsistency (9–15 vs 8–14) | README vs footer comparison | Standardised to 8–14 everywhere |
 | Provenance section heading was vague | Footer review | Renamed from "VERIFIED PROVENANCE" to "DATA SOURCES & PROVENANCE" |
+| Pinned 3D scene only filling top of screen with 300vh dark gap below | Browser — Moon, Mars, Voyager scenes | Replaced `overflow-x: hidden` with `clip` in `reset.css`, added active ScrollTrigger pin, full `100svh`/`100dvh` stage sizing |
+| Headline truncated mid-word on "...safely walk on foo" | Browser — Moon scene typewriter | Initialized `displayedText` with full sentence, rapid reveal and hold so full sentence is always readable |
 
 ---
 
